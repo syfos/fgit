@@ -32,10 +32,6 @@ pub struct Git {
   pub git_status: Vec<result::Result<StatusCode, String>>,
   pub branches_container: result::Result<BranchesContainer, String>,
   pub ahead_behind: Vec<ABData>,
-
-  // commit list of entire repo.
-  // equivalent to: git log --oneline
-  // purpose: for listing all commits done
   pub commits: Vec<Oid>,
 
   // Stash list of entire repo.
@@ -64,8 +60,8 @@ impl Git {
     let remotes = Git::get_remotes(&repo);
     let branches_container = Git::get_branches(&repo);
     let ahead_behind = Git::safely_get_ahead_behind(&repo, &head.get_attached(&repo)?.unwrap(), &branches_container);
+    let commits = Git::get_present_commits_list(&repo)?;
 
-    let commits = Git::get_commits_log(&repo)?;
     let stash_list = Git::get_stash_list(&mut repo)?;
     let tag_list = Git::get_tags_detailed(&repo)?;
 
