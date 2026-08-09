@@ -1,7 +1,9 @@
 use std::result;
 
 use crate::git::{
-  ahead_behind::ABData, branches::BranchesContainer, config::ConfigData, head::HeadCondition, index::StatusCode, refs::RefrenceContainer, remote::RemoteData, repo_state::RepoState, tags_list::TagInfo
+  ahead_behind::ABData, branches::BranchesContainer, config::ConfigData, head::HeadCondition,
+  index::StatusCode, refs::RefrenceContainer, remote::RemoteData, repo_state::RepoState,
+  stash_list::StashData, tags_list::TagInfo,
 };
 use git2::{Oid, Repository};
 
@@ -33,9 +35,7 @@ pub struct Git {
   pub branches_container: result::Result<BranchesContainer, String>,
   pub ahead_behind: Vec<ABData>,
   pub commits: Vec<Oid>,
-
-  // Stash list of entire repo.
-  pub stash_list: Vec<(usize, String, Oid)>,
+  pub stash_list: Vec<StashData>,
 
   // Tag list of entire repo
   pub tag_list: Vec<TagInfo>,
@@ -59,7 +59,11 @@ impl Git {
     let git_status = StatusCode::new(&repo);
     let remotes = Git::get_remotes(&repo);
     let branches_container = Git::get_branches(&repo);
-    let ahead_behind = Git::safely_get_ahead_behind(&repo, &head.get_attached(&repo)?.unwrap(), &branches_container);
+    let ahead_behind = Git::safely_get_ahead_behind(
+      &repo,
+      &head.get_attached(&repo)?.unwrap(),
+      &branches_container,
+    );
     let commits = Git::get_present_commits_list(&repo)?;
 
     let stash_list = Git::get_stash_list(&mut repo)?;
