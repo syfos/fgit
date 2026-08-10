@@ -13,6 +13,16 @@ pub struct TagInfo {
 #[allow(dead_code)]
 impl Git {
   /// Get the entire tags of repo. TagInfo contains name of tag along with oid and annotated: bool (to tell whether it is lightweight/annotated)
+  ///
+  /// # Todo: Prepare data for anonated tags.
+  /// ```
+  ///pub struct TagInfo {
+  ///  pub name: String,
+  ///  pub oid: git2::Oid,
+  ///  /// Whether notes/metadata is attached or not. If not then tag is lightweight instead of a git obj.
+  ///  pub annotated: bool,
+  ///}
+  ///```
   pub fn get_tags_detailed(repo: &Repository) -> Result<Vec<TagInfo>, git2::Error> {
     let mut tags = Vec::new();
 
