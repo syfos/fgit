@@ -1,3 +1,4 @@
+mod ui;
 mod action;
 mod cmd;
 mod git;
