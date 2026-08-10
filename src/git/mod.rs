@@ -7,7 +7,6 @@ use crate::git::{
 };
 use git2::{Oid, Repository};
 
-// ==========================
 pub mod ahead_behind;
 pub mod branches;
 pub mod commit_log;
@@ -21,13 +20,13 @@ pub mod stash_list;
 pub mod string_to_path;
 pub mod tags_list;
 pub mod utils;
-// ==========================
 
 /// Fgit's data struct for Git.
 #[allow(dead_code)]
 pub struct Git {
   pub repo: Repository,
   pub head: HeadCondition,
+  pub state: RepoState,
   pub refs: RefrenceContainer,
   pub remotes: result::Result<Vec<RemoteData>, String>,
   pub config: Vec<result::Result<ConfigData, String>>,
@@ -36,12 +35,7 @@ pub struct Git {
   pub ahead_behind: Vec<ABData>,
   pub commits: Vec<Oid>,
   pub stash_list: Vec<StashData>,
-
-  // Tag list of entire repo
   pub tag_list: Vec<TagInfo>,
-
-  // State of repo
-  pub state: RepoState,
 }
 
 #[allow(dead_code)]
@@ -49,12 +43,10 @@ impl Git {
   /// Compiles everything into a single structure.
   /// Can be used for Repowide refresh if called again.
   pub fn new(path: &str) -> anyhow::Result<Self> {
-    // Current
     let mut repo = Repository::open(Git::string_to_path(path)?)?;
     let head = HeadCondition::new(&repo)?;
     let refs = RefrenceContainer::new(&repo);
 
-    // Repo prefixed:
     let config = Git::get_config(&repo);
     let git_status = StatusCode::new(&repo);
     let remotes = Git::get_remotes(&repo);
@@ -65,13 +57,9 @@ impl Git {
       &branches_container,
     );
     let commits = Git::get_present_commits_list(&repo)?;
-
     let stash_list = Git::get_stash_list(&mut repo)?;
     let tag_list = Git::get_tags_detailed(&repo)?;
-
     let state = Git::get_repo_state(&repo);
-
-    // Comparison of all branches with current one for ahead_behind
 
     Ok(Self {
       repo,
@@ -89,5 +77,3 @@ impl Git {
     })
   }
 }
-// ==========================
-// ==========================
