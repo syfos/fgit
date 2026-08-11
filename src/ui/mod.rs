@@ -5,20 +5,20 @@ use ratatui::{
 };
 use std::{error::Error, result::Result};
 
+#[allow(dead_code)]
 pub struct Buffer {
   component: Vec<Rect>,
 }
 
+#[allow(dead_code)]
 pub struct Ui {
   pub buffer: Buffer,
 }
 
+#[allow(dead_code)]
 impl Ui {
-  pub fn new() -> Self {
-    Self {}
-  }
   pub fn run() -> Result<(), Box<dyn Error>> {
-    ratatui::run(|terminal| Self::draw(terminal))?;
+    ratatui::run(Self::draw)?;
     Ok(())
   }
 
@@ -49,9 +49,6 @@ impl Ui {
           frame.render_widget(paragraph, *chunk);
         }
       })?;
-
-
-      if let 
     }
   }
 }
