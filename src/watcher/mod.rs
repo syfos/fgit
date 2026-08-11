@@ -30,7 +30,7 @@ impl WatchSignals {
       let signals = signals.clone();
       std::thread::spawn(move || {
         let result = (|| -> anyhow::Result<()> {
-          let repo = Git::string_to_path("~/impl/rust/pugit/.git/")?;
+          let repo = Git::string_to_path("~/impl/rust/fgit/.git/")?;
 
           let mut debouncer = new_debouncer(Duration::from_millis(500), {
             let signals = signals.clone();
