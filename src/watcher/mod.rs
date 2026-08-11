@@ -1,4 +1,5 @@
 use std::{
+  result::Result,
   sync::{
     Arc,
     atomic::{AtomicBool, Ordering},
@@ -22,7 +23,7 @@ pub struct WatchSignals {
 }
 
 impl WatchSignals {
-  pub fn spawn() -> anyhow::Result<Arc<WatchSignals>> {
+  pub fn spawn() -> Result<Arc<WatchSignals>, Box<dyn std::error::Error>> {
     let signals = Arc::new(WatchSignals::default());
     let (tx, rx) = std::sync::mpsc::channel::<anyhow::Result<()>>();
 
