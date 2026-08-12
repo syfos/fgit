@@ -1,12 +1,8 @@
-use fgit::git::Git;
+use fgit::ui::Ui;
 
 #[allow(dead_code)]
 #[allow(unused)]
 fn main() -> anyhow::Result<(), anyhow::Error> {
-  let git = Git::new("../")?;
-  if git.head.is_attached() {
-    let b = git.head.get_attached(&git.repo)?.unwrap();
-    println!("{}", b.name()?.unwrap());
-  }
+  let ui = Ui::run();
   Ok(())
 }
