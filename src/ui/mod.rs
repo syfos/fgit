@@ -5,6 +5,8 @@ use ratatui::{
 };
 use std::{error::Error, result::Result};
 
+use crate::{action::InputSignal, app::App};
+
 #[allow(dead_code)]
 pub struct Buffer {
   component: Vec<Rect>,
@@ -20,7 +22,7 @@ pub struct Ui {
 impl Ui {
   /// Wrapper over [`ratatui::run`].
   pub fn run() -> Result<(), Box<dyn Error>> {
-    ratatui::run(Self::draw)?;
+    ratatui::run(Self::manager)?;
     Ok(())
   }
 
@@ -37,8 +39,8 @@ impl Ui {
       .to_vec()
   }
 
-  /// The main draw loop of ui.
-  fn draw(terminal: &mut DefaultTerminal) -> std::result::Result<(), Box<dyn Error>> {
+  /// Loop that `draws ui` and handles `input keys`.
+  fn manager(terminal: &mut DefaultTerminal) -> std::result::Result<(), Box<dyn Error>> {
     loop {
       terminal.draw(|frame| {
         let chunks = Self::split_horizontal(frame.area(), 4);
@@ -56,6 +58,16 @@ impl Ui {
           frame.render_widget(paragraph, *chunk);
         }
       })?;
+
+      match App::handle_input() {
+        Ok(InputSignal::Quit) => break Ok(()),
+
+        // Handle io error
+        Err(e) => break Err(e),
+
+        // Exhaustiv maych
+        Ok(InputSignal::None) => {}
+      }
     }
   }
 }
