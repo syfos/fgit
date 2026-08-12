@@ -1,7 +1,5 @@
-use std::sync::Arc;
-use fgit::ui::Ui;
-
 use crate::watcher::WatchSignals;
+use std::sync::Arc;
 
 #[allow(dead_code)]
 pub struct App {
