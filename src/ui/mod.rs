@@ -10,6 +10,7 @@ pub struct Buffer {
   component: Vec<Rect>,
 }
 
+/// The core that handles `Ui` of `Fgit`.
 #[allow(dead_code)]
 pub struct Ui {
   pub buffer: Buffer,
@@ -17,13 +18,18 @@ pub struct Ui {
 
 #[allow(dead_code)]
 impl Ui {
+  /// Wrapper over [`ratatui::run`].
   pub fn run() -> Result<(), Box<dyn Error>> {
     ratatui::run(Self::draw)?;
     Ok(())
   }
 
-  fn split_horizontal(area: Rect) -> Vec<Rect> {
-    let constraints = vec![Constraint::Ratio(1, 1)];
+  /// Produces equal splits that are `vertically` stacked one above another, by dividing the entire terminal area by `net_splits`.
+  fn split_horizontal(area: Rect, net_splits: u32) -> Vec<Rect> {
+    // vec![value; count];
+    // the number of chunks you get out of Layout::split() always equals the number of constraints you put in.
+    // Hence so the size of vector == net_split
+    let constraints = vec![Constraint::Ratio(1, net_splits); net_splits as usize];
     ratatui::layout::Layout::default()
       .direction(ratatui::layout::Direction::Vertical)
       .constraints(constraints)
@@ -31,10 +37,11 @@ impl Ui {
       .to_vec()
   }
 
+  /// The main draw loop of ui.
   fn draw(terminal: &mut DefaultTerminal) -> std::result::Result<(), Box<dyn Error>> {
     loop {
       terminal.draw(|frame| {
-        let chunks = Self::split_horizontal(frame.area());
+        let chunks = Self::split_horizontal(frame.area(), 4);
         for (i, chunk) in chunks.iter().enumerate() {
           let borders = if i == 0 {
             Borders::TOP | Borders::BOTTOM
