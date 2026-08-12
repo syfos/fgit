@@ -1,5 +1,5 @@
 #[allow(dead_code)]
-pub enum InputSignal {
+pub enum IoSignal {
   Quit,
   None,
 }

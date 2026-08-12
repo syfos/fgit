@@ -5,7 +5,7 @@ use ratatui::{
 };
 use std::{error::Error, result::Result};
 
-use crate::{action::InputSignal, app::App};
+use crate::{action::IoSignal, app::App};
 
 #[allow(dead_code)]
 pub struct Buffer {
@@ -50,7 +50,6 @@ impl Ui {
           } else {
             Borders::BOTTOM
           };
-
           let block = Block::default().borders(borders);
 
           let paragraph = Paragraph::new(format!("Panel: {i}")).block(block);
@@ -60,13 +59,13 @@ impl Ui {
       })?;
 
       match App::handle_input() {
-        Ok(InputSignal::Quit) => break Ok(()),
+        Ok(IoSignal::Quit) => break Ok(()),
 
         // Handle io error
         Err(e) => break Err(e),
 
         // Exhaustiv maych
-        Ok(InputSignal::None) => {}
+        Ok(IoSignal::None) => {}
       }
     }
   }
