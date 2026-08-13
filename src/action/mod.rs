@@ -25,6 +25,7 @@ impl Default for EventManager {
 
 #[allow(dead_code)]
 pub enum IoSignal {
+  Split,
   Quit,
   None,
 }
