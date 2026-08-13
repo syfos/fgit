@@ -2,16 +2,16 @@ use crossterm::event::KeyCode;
 #[allow(dead_code)]
 /// Event manager for `Fgit`.
 pub struct EventManager {
-  mode: ModeType,
-  key_pressed: IoSignal,
-  pending_prefix: KeyCode,
+  pub mode: ModeType,
+  pub signal: IoSignal,
+  pub pending_prefix: KeyCode,
 }
 
 impl EventManager {
   pub fn new() -> Self {
     Self {
       mode: ModeType::Normal,
-      key_pressed: IoSignal::None,
+      signal: IoSignal::None,
       pending_prefix: KeyCode::Null,
     }
   }
@@ -25,7 +25,8 @@ impl Default for EventManager {
 
 #[allow(dead_code)]
 pub enum IoSignal {
-  Split,
+  Vsplit,
+  Hsplit,
   Quit,
   None,
 }
