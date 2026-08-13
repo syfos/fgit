@@ -13,7 +13,8 @@ impl App {
         KeyCode::Char('w') if key.modifiers == KeyModifiers::CONTROL => {
           if let Event::Key(next) = crossterm::event::read()? {
             match next.code {
-              KeyCode::Char('s') => return Ok(IoSignal::Split),
+              KeyCode::Char('h') => return Ok(IoSignal::Hsplit),
+              KeyCode::Char('v') => return Ok(IoSignal::Vsplit),
               _ => {}
             }
           }
