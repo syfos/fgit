@@ -1,5 +1,5 @@
 use ratatui::{
-  DefaultTerminal,
+  DefaultTerminal, Frame,
   layout::{Constraint, Rect},
   widgets::{Block, Borders, Paragraph},
 };
@@ -19,7 +19,8 @@ pub enum Buffer {
 pub struct Tui {
   pub current_buffer: Buffer,
   pub area: Rect,
-  pub netsplit: Vec<Rect>,
+  pub vsplits: usize,
+  pub hsplits: usize,
 }
 
 #[allow(dead_code)]
@@ -28,7 +29,8 @@ impl Tui {
     Self {
       current_buffer: Buffer::GitHealth,
       area: Rect::default(),
-      netsplit: Vec::new(),
+      vsplits: 0,
+      hsplits: 0,
     }
   }
 
@@ -38,14 +40,24 @@ impl Tui {
     Ok(())
   }
 
-  /// Produces equal splits that are `vertically` stacked one above another, by dividing the entire terminal area by `net_splits`.
-  fn split_horizontal(area: Rect, net_splits: u32) -> Vec<Rect> {
+  /// Produces equal splits in `vertical direction`, i.e  `stacked one above another`, by dividing the entire terminal area by `net_vsplits`.
+  fn split_vertically(area: Rect, net_vsplits: u32) -> Vec<Rect> {
     // vec![value; count];
     // the number of chunks you get out of Layout::split() always equals the number of constraints you put in.
     // Hence so the size of vector == net_split
-    let constraints = vec![Constraint::Ratio(1, net_splits); net_splits as usize];
+    let constraints = vec![Constraint::Ratio(1, net_vsplits); net_vsplits as usize];
     ratatui::layout::Layout::default()
       .direction(ratatui::layout::Direction::Vertical)
+      .constraints(constraints)
+      .split(area)
+      .to_vec()
+  }
+
+  /// Produces equal splits in `horizontal direction`, i.e  `side by side`, by dividing the entire terminal area by `net_hsplits`.
+  fn split_horizontally(area: Rect, net_hsplits: u32) -> Vec<Rect> {
+    let constraints = vec![Constraint::Ratio(1, net_hsplits); net_hsplits as usize];
+    ratatui::layout::Layout::default()
+      .direction(ratatui::layout::Direction::Horizontal)
       .constraints(constraints)
       .split(area)
       .to_vec()
@@ -60,28 +72,18 @@ impl Tui {
       terminal.draw(|frame| {
         let area = frame.area();
         app.tui.area = area;
-        let chunks = app.tui.netsplit.clone();
-        for (i, chunk) in chunks.iter().enumerate() {
-          let borders = if i == 0 {
-            Borders::TOP | Borders::BOTTOM
-          } else {
-            Borders::BOTTOM
-          };
-          let block = Block::default().borders(borders);
-
-          let paragraph = Paragraph::new(format!("Panel: {i}")).block(block);
-
-          frame.render_widget(paragraph, *chunk);
-        }
+        Self::render_splits(app, frame);
       })?;
 
       match App::handle_input(app) {
         Ok(IoSignal::Quit) => break Ok(()),
 
-        Ok(IoSignal::Split) => {
-          let count = app.tui.netsplit.len() + 1;
-          let split = Self::split_horizontal(app.tui.area, count as u32);
-          app.tui.netsplit = split;
+        Ok(IoSignal::Vsplit) => {
+          app.tui.vsplits += 1;
+        }
+
+        Ok(IoSignal::Hsplit) => {
+          app.tui.hsplits += 1;
         }
 
         // Handle io error
@@ -90,6 +92,35 @@ impl Tui {
         // Exhaustiv maych
         Ok(IoSignal::None) => {}
       }
+    }
+  }
+
+  fn render_splits(app: &mut App, frame: &mut Frame) {
+    let vsplits = Tui::split_vertically(frame.area(), app.tui.vsplits as u32);
+    let hsplits = Tui::split_horizontally(frame.area(), app.tui.hsplits as u32);
+    for (i, chunk) in vsplits.iter().enumerate() {
+      let borders = if i == 0 {
+        Borders::TOP | Borders::BOTTOM
+      } else {
+        Borders::BOTTOM
+      };
+      let block = Block::default().borders(borders);
+
+      let paragraph = Paragraph::new(format!("Panel: {i}")).block(block);
+
+      frame.render_widget(paragraph, *chunk);
+    }
+    for (i, chunk) in hsplits.iter().enumerate() {
+      let borders = if i == 0 {
+        Borders::LEFT | Borders::RIGHT
+      } else {
+        Borders::RIGHT
+      };
+      let block = Block::default().borders(borders);
+
+      let paragraph = Paragraph::new(format!("Panel: {i}")).block(block);
+
+      frame.render_widget(paragraph, *chunk);
     }
   }
 }
