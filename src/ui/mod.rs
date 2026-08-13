@@ -8,18 +8,26 @@ use std::{error::Error, result::Result};
 use crate::{action::IoSignal, app::App};
 
 #[allow(dead_code)]
-pub struct Buffer {
-  component: Vec<Rect>,
+pub enum Buffer {
+  GitHealth,
+  Help,
+  Menu,
 }
 
-/// The core that handles `Ui` of `Fgit`.
+/// The core that handles `Tui` of `Fgit`.
 #[allow(dead_code)]
-pub struct Ui {
-  pub buffer: Buffer,
+pub struct Tui {
+  pub current_buffer: Buffer,
 }
 
 #[allow(dead_code)]
-impl Ui {
+impl Tui {
+  pub fn new() -> Self {
+    Self {
+      current_buffer: Buffer::GitHealth,
+    }
+  }
+
   /// Wrapper over [`ratatui::run`].
   pub fn run() -> Result<(), Box<dyn Error>> {
     ratatui::run(Self::manager)?;
