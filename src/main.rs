@@ -1,14 +1,16 @@
-mod ui;
+use crate::ui::Tui;
+
 mod action;
+mod app;
 mod cmd;
 mod git;
 mod keys;
-mod app;
+mod ui;
 mod watcher;
 
 fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
   cmd::parser();
   let mut app = crate::app::App::new()?;
-  // app.run()?;
+  Tui::run(&mut app)?;
   Ok(())
 }
