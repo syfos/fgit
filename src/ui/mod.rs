@@ -18,6 +18,8 @@ pub enum Buffer {
 #[allow(dead_code)]
 pub struct Tui {
   pub current_buffer: Buffer,
+  pub area: Rect,
+  pub netsplit: Vec<Rect>,
 }
 
 #[allow(dead_code)]
@@ -25,12 +27,14 @@ impl Tui {
   pub fn new() -> Self {
     Self {
       current_buffer: Buffer::GitHealth,
+      area: Rect::default(),
+      netsplit: Vec::new(),
     }
   }
 
   /// Wrapper over [`ratatui::run`].
-  pub fn run() -> Result<(), Box<dyn Error>> {
-    ratatui::run(Self::manager)?;
+  pub fn run(app: &mut App) -> Result<(), Box<dyn Error>> {
+    ratatui::run(|terminal| Self::manager(app, terminal))?;
     Ok(())
   }
 
@@ -48,10 +52,15 @@ impl Tui {
   }
 
   /// Loop that `draws ui` and handles `input keys`.
-  fn manager(terminal: &mut DefaultTerminal) -> std::result::Result<(), Box<dyn Error>> {
+  fn manager(
+    app: &mut App,
+    terminal: &mut DefaultTerminal,
+  ) -> std::result::Result<(), Box<dyn Error>> {
     loop {
       terminal.draw(|frame| {
-        let chunks = Self::split_horizontal(frame.area(), 4);
+        let area = frame.area();
+        app.tui.area = area;
+        let chunks = app.tui.netsplit.clone();
         for (i, chunk) in chunks.iter().enumerate() {
           let borders = if i == 0 {
             Borders::TOP | Borders::BOTTOM
@@ -66,8 +75,14 @@ impl Tui {
         }
       })?;
 
-      match App::handle_input() {
+      match App::handle_input(app) {
         Ok(IoSignal::Quit) => break Ok(()),
+
+        Ok(IoSignal::Split) => {
+          let count = app.tui.netsplit.len() + 1;
+          let split = Self::split_horizontal(app.tui.area, count as u32);
+          app.tui.netsplit = split;
+        }
 
         // Handle io error
         Err(e) => break Err(e),
