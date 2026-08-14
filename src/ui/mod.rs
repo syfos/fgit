@@ -42,10 +42,14 @@ impl Tui {
 
   /// Produces equal splits in `vertical direction`, i.e  `stacked one above another`, by dividing the entire terminal area by `net_vsplits`.
   fn split_vertically(area: Rect, net_vsplits: u32) -> Vec<Rect> {
+    let mut x = net_vsplits;
+
+    // The net_vsplits is just a counter
+    x += 1;
     // vec![value; count];
     // the number of chunks you get out of Layout::split() always equals the number of constraints you put in.
     // Hence so the size of vector == net_split
-    let constraints = vec![Constraint::Ratio(1, net_vsplits); net_vsplits as usize];
+    let constraints = vec![Constraint::Ratio(1, x); x as usize];
     ratatui::layout::Layout::default()
       .direction(ratatui::layout::Direction::Vertical)
       .constraints(constraints)
@@ -55,7 +59,9 @@ impl Tui {
 
   /// Produces equal splits in `horizontal direction`, i.e  `side by side`, by dividing the entire terminal area by `net_hsplits`.
   fn split_horizontally(area: Rect, net_hsplits: u32) -> Vec<Rect> {
-    let constraints = vec![Constraint::Ratio(1, net_hsplits); net_hsplits as usize];
+    let mut x = net_hsplits;
+    x += 1;
+    let constraints = vec![Constraint::Ratio(1, x); x as usize];
     ratatui::layout::Layout::default()
       .direction(ratatui::layout::Direction::Horizontal)
       .constraints(constraints)
@@ -99,20 +105,28 @@ impl Tui {
   fn render_splits(app: &mut App, frame: &mut Frame) {
     let vsplits = Tui::split_vertically(frame.area(), app.tui.vsplits_count as u32);
     let hsplits = Tui::split_horizontally(frame.area(), app.tui.hsplits_counts as u32);
+
+    let v_len = vsplits.len();
     for (i, chunk) in vsplits.iter().enumerate() {
-      let borders = Borders::BOTTOM;
+      let borders = if i + 1 < v_len {
+        Borders::BOTTOM
+      } else {
+        Borders::NONE
+      };
       let block = Block::default().borders(borders);
-
       let paragraph = Paragraph::new(format!("Panel: {i}")).block(block);
-
       frame.render_widget(paragraph, *chunk);
     }
+
+    let h_len = hsplits.len();
     for (i, chunk) in hsplits.iter().enumerate() {
-      let borders = Borders::RIGHT;
+      let borders = if i + 1 < h_len {
+        Borders::RIGHT
+      } else {
+        Borders::NONE
+      };
       let block = Block::default().borders(borders);
-
       let paragraph = Paragraph::new(format!("Panel: {i}")).block(block);
-
       frame.render_widget(paragraph, *chunk);
     }
   }
