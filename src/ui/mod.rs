@@ -19,8 +19,8 @@ pub enum Buffer {
 pub struct Tui {
   pub current_buffer: Buffer,
   pub area: Rect,
-  pub vsplits: usize,
-  pub hsplits: usize,
+  pub vsplits_count: usize,
+  pub hsplits_counts: usize,
 }
 
 #[allow(dead_code)]
@@ -29,8 +29,8 @@ impl Tui {
     Self {
       current_buffer: Buffer::GitHealth,
       area: Rect::default(),
-      vsplits: 0,
-      hsplits: 0,
+      vsplits_count: 0,
+      hsplits_counts: 0,
     }
   }
 
@@ -79,11 +79,11 @@ impl Tui {
         Ok(IoSignal::Quit) => break Ok(()),
 
         Ok(IoSignal::Vsplit) => {
-          app.tui.vsplits += 1;
+          app.tui.vsplits_count += 1;
         }
 
         Ok(IoSignal::Hsplit) => {
-          app.tui.hsplits += 1;
+          app.tui.hsplits_counts += 1;
         }
 
         // Handle io error
@@ -97,14 +97,10 @@ impl Tui {
 
   // Handles rendering logic for splits.
   fn render_splits(app: &mut App, frame: &mut Frame) {
-    let vsplits = Tui::split_vertically(frame.area(), app.tui.vsplits as u32);
-    let hsplits = Tui::split_horizontally(frame.area(), app.tui.hsplits as u32);
+    let vsplits = Tui::split_vertically(frame.area(), app.tui.vsplits_count as u32);
+    let hsplits = Tui::split_horizontally(frame.area(), app.tui.hsplits_counts as u32);
     for (i, chunk) in vsplits.iter().enumerate() {
-      let borders = if i == 0 {
-        Borders::TOP | Borders::BOTTOM
-      } else {
-        Borders::BOTTOM
-      };
+      let borders = Borders::BOTTOM;
       let block = Block::default().borders(borders);
 
       let paragraph = Paragraph::new(format!("Panel: {i}")).block(block);
@@ -112,11 +108,7 @@ impl Tui {
       frame.render_widget(paragraph, *chunk);
     }
     for (i, chunk) in hsplits.iter().enumerate() {
-      let borders = if i == 0 {
-        Borders::LEFT | Borders::RIGHT
-      } else {
-        Borders::RIGHT
-      };
+      let borders = Borders::RIGHT;
       let block = Block::default().borders(borders);
 
       let paragraph = Paragraph::new(format!("Panel: {i}")).block(block);
