@@ -95,6 +95,7 @@ impl Tui {
     }
   }
 
+  // Handles rendering logic for splits.
   fn render_splits(app: &mut App, frame: &mut Frame) {
     let vsplits = Tui::split_vertically(frame.area(), app.tui.vsplits as u32);
     let hsplits = Tui::split_horizontally(frame.area(), app.tui.hsplits as u32);
