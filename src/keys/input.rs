@@ -3,6 +3,7 @@ use crossterm::event::{Event, KeyCode, KeyModifiers};
 use std::error::Error;
 
 impl App {
+  /// Returns `stdin` translated into [`IoSignal`].
   pub fn handle_input(&mut self) -> std::result::Result<IoSignal, Box<dyn Error>> {
     if let Event::Key(key) = crossterm::event::read()? {
       match key.code {
@@ -13,8 +14,9 @@ impl App {
         KeyCode::Char('w') if key.modifiers == KeyModifiers::CONTROL => {
           if let Event::Key(next) = crossterm::event::read()? {
             match next.code {
-              KeyCode::Char('h') => return Ok(IoSignal::Hsplit),
-              KeyCode::Char('v') => return Ok(IoSignal::Vsplit),
+              // For vim users Vertical is Horizontal. 
+              KeyCode::Char('v') => return Ok(IoSignal::Hsplit),
+              KeyCode::Char('h') => return Ok(IoSignal::Vsplit),
               _ => {}
             }
           }
