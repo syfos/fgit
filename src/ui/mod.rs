@@ -14,8 +14,8 @@ pub enum Buffer {
   Menu,
 }
 
-/// The core that handles `Tui` of `Fgit`.
 #[allow(dead_code)]
+/// Tui module of Fgit.
 pub struct Tui {
   pub cur_buf: Buffer,
   pub buf_area: Rect,
@@ -23,6 +23,7 @@ pub struct Tui {
   pub event_manager: EventManager,
 }
 
+/// Contains everything regarding splits.
 pub struct Splits {
   pub vsplit_count: u32,
   pub hsplit_count: u32,
@@ -33,6 +34,19 @@ pub struct Splits {
 }
 
 impl Splits {
+  /// Generates default state of splits for the given `tui.buf_area` i.e `current buffer area`
+  ///
+  ///```
+  /// // returns
+  ///Self {
+  ///  vsplit_count: 0,
+  ///  hsplit_count: 0,
+  ///  is_render_vertical: false,
+  ///  is_render_horizontal: false,
+  ///  vsplits: Vec::new(),
+  ///  hsplits: Vec::new(),
+  ///}
+  ///```
   pub fn new() -> Self {
     Self {
       vsplit_count: 0,
@@ -53,11 +67,66 @@ impl Splits {
   }
 
   pub fn update_vsplits(&mut self, buf_area: Rect) {
-    self.vsplits = Tui::split_vertically(buf_area, self.vsplit_count);
+    self.vsplits = self.split_vertically(buf_area);
   }
 
   pub fn update_hsplits(&mut self, buf_area: Rect) {
-    self.hsplits = Tui::split_horizontally(buf_area, self.hsplit_count);
+    self.hsplits = self.split_horizontally(buf_area);
+  }
+  /// Produces equal splits in `vertical direction`, i.e  `stacked one above another`, by dividing the entire terminal area by `net_vsplits`.
+  fn split_vertically(&self, buf_area: Rect) -> Vec<Rect> {
+    let mut x = self.vsplit_count;
+
+    // The net_vsplits is just a counter
+    x += 1;
+    // vec![value; count];
+    // the number of chunks you get out of Layout::split() always equals the number of constraints you put in.
+    // Hence so the size of vector == net_split
+    let constraints = vec![Constraint::Ratio(1, x); x as usize];
+    ratatui::layout::Layout::default()
+      .direction(ratatui::layout::Direction::Vertical)
+      .constraints(constraints)
+      .split(buf_area)
+      .to_vec()
+  }
+
+  /// Produces equal splits in `horizontal direction`, i.e  `side by side`, by dividing the entire terminal area by `net_hsplits`.
+  fn split_horizontally(&self, buf_area: Rect) -> Vec<Rect> {
+    let mut x = self.hsplit_count;
+    x += 1;
+    let constraints = vec![Constraint::Ratio(1, x); x as usize];
+    ratatui::layout::Layout::default()
+      .direction(ratatui::layout::Direction::Horizontal)
+      .constraints(constraints)
+      .split(buf_area)
+      .to_vec()
+  }
+  // Handles rendering logic for splits.
+  fn render_vsplits(tui: &Tui, frame: &mut Frame) {
+    let v_len = tui.splits.vsplits.len();
+    for (i, chunk) in tui.splits.vsplits.iter().enumerate() {
+      let borders = if i + 1 < v_len {
+        Borders::BOTTOM
+      } else {
+        Borders::NONE
+      };
+      let block = Block::default().borders(borders);
+      let paragraph = Paragraph::new(format!("Panel: {i}")).block(block);
+      frame.render_widget(paragraph, *chunk);
+    }
+  }
+  fn render_hsplits(tui: &Tui, frame: &mut Frame) {
+    let h_len = tui.splits.hsplits.len();
+    for (i, chunk) in tui.splits.hsplits.iter().enumerate() {
+      let borders = if i + 1 < h_len {
+        Borders::RIGHT
+      } else {
+        Borders::NONE
+      };
+      let block = Block::default().borders(borders);
+      let paragraph = Paragraph::new(format!("Panel: {i}")).block(block);
+      frame.render_widget(paragraph, *chunk);
+    }
   }
 }
 
@@ -74,52 +143,26 @@ impl Tui {
 
   /// Wrapper over [`ratatui::run`].
   pub fn run(&mut self) -> Result<(), Box<dyn Error>> {
-    ratatui::run(|terminal| self.manager(terminal))?;
+    ratatui::run(|terminal| self.renderer(terminal))?;
     Ok(())
   }
 
-  /// Produces equal splits in `vertical direction`, i.e  `stacked one above another`, by dividing the entire terminal area by `net_vsplits`.
-  fn split_vertically(area: Rect, net_vsplits: u32) -> Vec<Rect> {
-    let mut x = net_vsplits;
-
-    // The net_vsplits is just a counter
-    x += 1;
-    // vec![value; count];
-    // the number of chunks you get out of Layout::split() always equals the number of constraints you put in.
-    // Hence so the size of vector == net_split
-    let constraints = vec![Constraint::Ratio(1, x); x as usize];
-    ratatui::layout::Layout::default()
-      .direction(ratatui::layout::Direction::Vertical)
-      .constraints(constraints)
-      .split(area)
-      .to_vec()
-  }
-
-  /// Produces equal splits in `horizontal direction`, i.e  `side by side`, by dividing the entire terminal area by `net_hsplits`.
-  fn split_horizontally(area: Rect, net_hsplits: u32) -> Vec<Rect> {
-    let mut x = net_hsplits;
-    x += 1;
-    let constraints = vec![Constraint::Ratio(1, x); x as usize];
-    ratatui::layout::Layout::default()
-      .direction(ratatui::layout::Direction::Horizontal)
-      .constraints(constraints)
-      .split(area)
-      .to_vec()
-  }
-
   /// Loop that `draws ui` and handles `input keys`.
-  fn manager(&mut self, terminal: &mut DefaultTerminal) -> std::result::Result<(), Box<dyn Error>> {
+  fn renderer(
+    &mut self,
+    terminal: &mut DefaultTerminal,
+  ) -> std::result::Result<(), Box<dyn Error>> {
     loop {
       terminal.draw(|frame| {
         let area = frame.area();
         self.buf_area = area;
 
         if self.splits.is_render_vertical {
-          self.render_vsplits(frame);
+          Splits::render_vsplits(self, frame);
         }
 
         if self.splits.is_render_horizontal {
-          self.render_hsplits(frame);
+          Splits::render_hsplits(self, frame);
         }
       })?;
 
@@ -144,34 +187,6 @@ impl Tui {
         // Exhaustiv maych
         Ok(IoSignal::None) => {}
       }
-    }
-  }
-
-  // Handles rendering logic for splits.
-  fn render_vsplits(&self, frame: &mut Frame) {
-    let v_len = self.splits.vsplits.len();
-    for (i, chunk) in self.splits.vsplits.iter().enumerate() {
-      let borders = if i + 1 < v_len {
-        Borders::BOTTOM
-      } else {
-        Borders::NONE
-      };
-      let block = Block::default().borders(borders);
-      let paragraph = Paragraph::new(format!("Panel: {i}")).block(block);
-      frame.render_widget(paragraph, *chunk);
-    }
-  }
-  fn render_hsplits(&self, frame: &mut Frame) {
-    let h_len = self.splits.hsplits.len();
-    for (i, chunk) in self.splits.hsplits.iter().enumerate() {
-      let borders = if i + 1 < h_len {
-        Borders::RIGHT
-      } else {
-        Borders::NONE
-      };
-      let block = Block::default().borders(borders);
-      let paragraph = Paragraph::new(format!("Panel: {i}")).block(block);
-      frame.render_widget(paragraph, *chunk);
     }
   }
 }
