@@ -32,7 +32,7 @@ pub enum IoSignal {
 }
 
 #[allow(dead_code)]
-enum ModeType {
+pub enum ModeType {
   Normal,
   Visual,
   Insert,
