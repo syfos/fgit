@@ -11,6 +11,6 @@ mod watcher;
 fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
   cmd::parser();
   let mut app = crate::app::App::new()?;
-  Tui::run(&mut app)?;
+  Tui::run(&mut app.tui)?;
   Ok(())
 }
