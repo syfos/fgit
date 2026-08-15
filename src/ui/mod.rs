@@ -5,7 +5,7 @@ use ratatui::{
 };
 use std::{error::Error, result::Result};
 
-use crate::{action::IoSignal, app::App};
+use crate::action::{EventManager, IoSignal};
 
 #[allow(dead_code)]
 pub enum Buffer {
@@ -17,26 +17,64 @@ pub enum Buffer {
 /// The core that handles `Tui` of `Fgit`.
 #[allow(dead_code)]
 pub struct Tui {
-  pub current_buffer: Buffer,
-  pub area: Rect,
-  pub vsplits_count: usize,
-  pub hsplits_counts: usize,
+  pub cur_buf: Buffer,
+  pub buf_area: Rect,
+  pub splits: Splits,
+  pub event_manager: EventManager,
+}
+
+pub struct Splits {
+  pub vsplit_count: u32,
+  pub hsplit_count: u32,
+  pub is_render_vertical: bool,
+  pub is_render_horizontal: bool,
+  pub vsplits: Vec<Rect>,
+  pub hsplits: Vec<Rect>,
+}
+
+impl Splits {
+  pub fn new() -> Self {
+    Self {
+      vsplit_count: 0,
+      hsplit_count: 0,
+      is_render_vertical: false,
+      is_render_horizontal: false,
+      vsplits: Vec::new(),
+      hsplits: Vec::new(),
+    }
+  }
+
+  pub fn increment_vsplit_count(&mut self) {
+    self.vsplit_count = self.vsplit_count.saturating_add(1);
+  }
+
+  pub fn increment_hsplit_count(&mut self) {
+    self.hsplit_count = self.hsplit_count.saturating_add(1);
+  }
+
+  pub fn update_vsplits(&mut self, buf_area: Rect) {
+    self.vsplits = Tui::split_vertically(buf_area, self.vsplit_count);
+  }
+
+  pub fn update_hsplits(&mut self, buf_area: Rect) {
+    self.hsplits = Tui::split_horizontally(buf_area, self.hsplit_count);
+  }
 }
 
 #[allow(dead_code)]
 impl Tui {
   pub fn new() -> Self {
     Self {
-      current_buffer: Buffer::GitHealth,
-      area: Rect::default(),
-      vsplits_count: 0,
-      hsplits_counts: 0,
+      cur_buf: Buffer::GitHealth,
+      buf_area: Rect::default(),
+      splits: Splits::new(),
+      event_manager: EventManager::default(),
     }
   }
 
   /// Wrapper over [`ratatui::run`].
-  pub fn run(app: &mut App) -> Result<(), Box<dyn Error>> {
-    ratatui::run(|terminal| Self::manager(app, terminal))?;
+  pub fn run(&mut self) -> Result<(), Box<dyn Error>> {
+    ratatui::run(|terminal| self.manager(terminal))?;
     Ok(())
   }
 
@@ -70,26 +108,34 @@ impl Tui {
   }
 
   /// Loop that `draws ui` and handles `input keys`.
-  fn manager(
-    app: &mut App,
-    terminal: &mut DefaultTerminal,
-  ) -> std::result::Result<(), Box<dyn Error>> {
+  fn manager(&mut self, terminal: &mut DefaultTerminal) -> std::result::Result<(), Box<dyn Error>> {
     loop {
       terminal.draw(|frame| {
         let area = frame.area();
-        app.tui.area = area;
-        Self::render_splits(app, frame);
+        self.buf_area = area;
+
+        if self.splits.is_render_vertical {
+          self.render_vsplits(frame);
+        }
+
+        if self.splits.is_render_horizontal {
+          self.render_hsplits(frame);
+        }
       })?;
 
-      match App::handle_input(app) {
+      match Self::handle_input() {
         Ok(IoSignal::Quit) => break Ok(()),
 
         Ok(IoSignal::Vsplit) => {
-          app.tui.vsplits_count += 1;
+          self.splits.increment_vsplit_count();
+          self.splits.update_vsplits(self.buf_area);
+          self.splits.is_render_vertical = true;
         }
 
         Ok(IoSignal::Hsplit) => {
-          app.tui.hsplits_counts += 1;
+          self.splits.increment_hsplit_count();
+          self.splits.update_hsplits(self.buf_area);
+          self.splits.is_render_horizontal = true;
         }
 
         // Handle io error
@@ -102,12 +148,9 @@ impl Tui {
   }
 
   // Handles rendering logic for splits.
-  fn render_splits(app: &mut App, frame: &mut Frame) {
-    let vsplits = Tui::split_vertically(frame.area(), app.tui.vsplits_count as u32);
-    let hsplits = Tui::split_horizontally(frame.area(), app.tui.hsplits_counts as u32);
-
-    let v_len = vsplits.len();
-    for (i, chunk) in vsplits.iter().enumerate() {
+  fn render_vsplits(&self, frame: &mut Frame) {
+    let v_len = self.splits.vsplits.len();
+    for (i, chunk) in self.splits.vsplits.iter().enumerate() {
       let borders = if i + 1 < v_len {
         Borders::BOTTOM
       } else {
@@ -117,9 +160,10 @@ impl Tui {
       let paragraph = Paragraph::new(format!("Panel: {i}")).block(block);
       frame.render_widget(paragraph, *chunk);
     }
-
-    let h_len = hsplits.len();
-    for (i, chunk) in hsplits.iter().enumerate() {
+  }
+  fn render_hsplits(&self, frame: &mut Frame) {
+    let h_len = self.splits.hsplits.len();
+    for (i, chunk) in self.splits.hsplits.iter().enumerate() {
       let borders = if i + 1 < h_len {
         Borders::RIGHT
       } else {
