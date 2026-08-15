@@ -1,10 +1,10 @@
-use crate::{action::IoSignal, app::App};
+use crate::{action::IoSignal, app::App, ui::Tui};
 use crossterm::event::{Event, KeyCode, KeyModifiers};
 use std::error::Error;
 
-impl App {
+impl Tui {
   /// Returns `stdin` translated into [`IoSignal`].
-  pub fn handle_input(&mut self) -> std::result::Result<IoSignal, Box<dyn Error>> {
+  pub fn handle_input() -> std::result::Result<IoSignal, Box<dyn Error>> {
     if let Event::Key(key) = crossterm::event::read()? {
       match key.code {
         KeyCode::Char('q') if key.modifiers == KeyModifiers::CONTROL => {
