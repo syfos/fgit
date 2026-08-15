@@ -4,7 +4,6 @@ mod action;
 mod app;
 mod cmd;
 mod git;
-mod keys;
 mod ui;
 mod watcher;
 
