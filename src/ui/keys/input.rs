@@ -1,4 +1,4 @@
-use crate::{action::IoSignal, app::App, ui::Tui};
+use crate::{action::IoSignal, ui::Tui};
 use crossterm::event::{Event, KeyCode, KeyModifiers};
 use std::error::Error;
 
@@ -14,7 +14,7 @@ impl Tui {
         KeyCode::Char('w') if key.modifiers == KeyModifiers::CONTROL => {
           if let Event::Key(next) = crossterm::event::read()? {
             match next.code {
-              // For vim users Vertical is Horizontal. 
+              // For vim users Vertical is Horizontal.
               KeyCode::Char('v') => return Ok(IoSignal::Hsplit),
               KeyCode::Char('h') => return Ok(IoSignal::Vsplit),
               _ => {}
