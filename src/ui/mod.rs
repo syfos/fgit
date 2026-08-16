@@ -8,8 +8,8 @@ pub mod buffer;
 pub mod renderer;
 pub mod splits;
 pub mod keys;
+pub mod process_input;
 
-#[allow(dead_code)]
 /// Tui module of Fgit.
 pub struct Tui {
   pub cur_buf: Buffer,
@@ -18,7 +18,6 @@ pub struct Tui {
   pub event_manager: EventManager,
 }
 
-#[allow(dead_code)]
 impl Tui {
   pub fn new() -> Self {
     Self {
