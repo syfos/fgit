@@ -1,5 +1,4 @@
 use crate::{
-  action::IoSignal,
   ui::{Tui, splits::SplitSeperator},
 };
 use ratatui::DefaultTerminal;
@@ -12,8 +11,8 @@ impl Tui {
     Ok(())
   }
 
-  /// Loop that `draws ui` and handles `input keys`.
-  fn renderer(
+  /// Main renderer that renders Fgit's whole Tui.
+  pub fn renderer(
     &mut self,
     terminal: &mut DefaultTerminal,
   ) -> std::result::Result<(), Box<dyn Error>> {
@@ -29,31 +28,8 @@ impl Tui {
           self.splits.horizontal.render(frame, SplitSeperator::Right);
         }
       })?;
-
-      match Self::handle_input() {
-        Ok(IoSignal::Quit) => break Ok(()),
-
-        Ok(IoSignal::Vsplit) => {
-          self.splits.vertical.increment_count();
-          self
-            .splits
-            .vertical
-            .split(self.buf_area, ratatui::layout::Direction::Vertical);
-        }
-
-        Ok(IoSignal::Hsplit) => {
-          self.splits.horizontal.increment_count();
-          self
-            .splits
-            .horizontal
-            .split(self.buf_area, ratatui::layout::Direction::Horizontal);
-        }
-
-        // Handle io error
-        Err(e) => break Err(e),
-
-        // Exhaustiv maych
-        Ok(IoSignal::None) => {}
+      if self.process_input()? {
+        break Ok(());
       }
     }
   }
