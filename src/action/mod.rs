@@ -27,6 +27,8 @@ impl Default for EventManager {
 pub enum IoSignal {
   Vsplit,
   Hsplit,
+  DelVsplit,
+  DelHsplit,
   Quit,
   None,
 }
