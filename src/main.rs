@@ -1,5 +1,3 @@
-use crate::ui::Tui;
-
 mod action;
 mod app;
 mod cmd;
@@ -10,6 +8,6 @@ mod watcher;
 fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
   cmd::parser();
   let mut app = crate::app::App::new()?;
-  Tui::run(&mut app.tui)?;
+  crate::ui::Tui::run(&mut app.tui)?;
   Ok(())
 }
