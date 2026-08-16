@@ -1,19 +1,19 @@
 use crate::{
   action::EventManager,
-  ui::{buffer::Buffer, splits::Splits},
+  ui::{buffer::ParentBuf, splits::Splits},
 };
 use ratatui::layout::Rect;
 
 pub mod buffer;
-pub mod renderer;
-pub mod splits;
 pub mod keys;
 pub mod process_input;
+pub mod renderer;
+pub mod splits;
 
 /// Tui module of Fgit.
 pub struct Tui {
-  pub cur_buf: Buffer,
-  pub buf_area: Rect,
+  pub parent_buf: ParentBuf,
+  pub screen_area: Rect,
   pub splits: Splits,
   pub event_manager: EventManager,
 }
@@ -21,8 +21,8 @@ pub struct Tui {
 impl Tui {
   pub fn new() -> Self {
     Self {
-      cur_buf: Buffer::GitHealth,
-      buf_area: Rect::default(),
+      parent_buf: ParentBuf::GitHealth,
+      screen_area: Rect::default(),
       splits: Splits::default(),
       event_manager: EventManager::default(),
     }

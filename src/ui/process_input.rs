@@ -10,7 +10,7 @@ impl Tui {
         self
           .splits
           .vertical
-          .split(self.buf_area, ratatui::layout::Direction::Vertical);
+          .split(self.screen_area, ratatui::layout::Direction::Vertical);
         Ok(false)
       }
 
@@ -19,7 +19,7 @@ impl Tui {
         self
           .splits
           .horizontal
-          .split(self.buf_area, ratatui::layout::Direction::Horizontal);
+          .split(self.screen_area, ratatui::layout::Direction::Horizontal);
         Ok(false)
       }
 

@@ -18,7 +18,7 @@ impl Tui {
   ) -> std::result::Result<(), Box<dyn Error>> {
     loop {
       terminal.draw(|frame| {
-        self.buf_area = frame.area();
+        self.screen_area = frame.area();
 
         if !self.splits.vertical.splits.is_empty() {
           self.splits.vertical.render(frame, SplitSeperator::Bottom);
