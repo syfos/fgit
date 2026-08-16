@@ -24,7 +24,7 @@ impl Tui {
     Self {
       cur_buf: Buffer::GitHealth,
       buf_area: Rect::default(),
-      splits: Splits::new(),
+      splits: Splits::default(),
       event_manager: EventManager::default(),
     }
   }
