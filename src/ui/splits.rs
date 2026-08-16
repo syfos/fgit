@@ -41,13 +41,22 @@ pub struct SplitAxis {
 }
 
 impl SplitAxis {
+  /// Increments splits counter correctly to prevent `count == 1` case as `buf_area/1` results in no splits.
+  ///
+  /// On first `<C-w>v` or `<C-w>h` sequence the counter will be incremented by `2` to equally divide `buf_area` into `two splits`.
+  ///
+  /// On second sequence this will increment `only by 1`.
   pub fn increment_count(&mut self) {
-    self.count = self.count.saturating_add(1);
+    if self.count == 0 {
+      self.count = self.count.saturating_add(2);
+    } else {
+      self.count = self.count.saturating_add(1);
+    }
   }
 
+  /// Splits current buffer into equal splits according to the given [`Direction`] i.e only `Vertical` and `Horizontal`.
   pub fn split(&mut self, buf_area: Rect, direction: Direction) {
-    let x = self.count + 1;
-    let constraints = vec![Constraint::Ratio(1, x); x as usize];
+    let constraints = vec![Constraint::Ratio(1, self.count); self.count as usize];
     self.splits = ratatui::layout::Layout::default()
       .direction(direction)
       .constraints(constraints)
@@ -55,6 +64,8 @@ impl SplitAxis {
       .to_vec()
   }
 
+  /// Renders splits according to the given [`SplitSeperator`].
+  /// Enter `SplitSeperator::Bottom` when rendering `Vertical` splits and use `SplitSeperator::Right` when rendering `Horizontal` splits.
   pub fn render(&self, frame: &mut Frame, seperator: SplitSeperator) {
     let seperator = seperator.as_borders();
     for (i, chunk) in self.splits.iter().enumerate() {
