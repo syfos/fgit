@@ -42,7 +42,7 @@ pub struct SplitAxis {
 
 impl SplitAxis {
   pub fn increment_count(&mut self) {
-    self.count += self.count.saturating_add(1);
+    self.count = self.count.saturating_add(1);
   }
 
   pub fn split(&mut self, buf_area: Rect, direction: Direction) {
