@@ -22,6 +22,16 @@ impl Tui {
           }
         }
 
+        KeyCode::Char('d') if key.modifiers == KeyModifiers::CONTROL => {
+          if let Event::Key(next) = crossterm::event::read()? {
+            match next.code {
+              KeyCode::Char('v') => return Ok(IoSignal::DelVsplit),
+              KeyCode::Char('h') => return Ok(IoSignal::DelHsplit),
+              _ => {},
+            }
+          }
+        }
+
         _ => {}
       }
     }
