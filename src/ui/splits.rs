@@ -53,7 +53,7 @@ impl SplitAxis {
       self.count = self.count.saturating_add(1);
     }
   }
-
+  ///
   /// Splits current buffer into equal splits according to the given [`Direction`] i.e only `Vertical` and `Horizontal`.
   pub fn split(&mut self, screen_area: Rect, direction: Direction) {
     let constraints = vec![Constraint::Ratio(1, self.count); self.count as usize];
@@ -62,6 +62,10 @@ impl SplitAxis {
       .constraints(constraints)
       .split(screen_area)
       .to_vec()
+  }
+
+  pub fn del_split(&mut self) {
+    self.splits.pop();
   }
 
   /// Renders splits according to the given [`SplitSeperator`].
