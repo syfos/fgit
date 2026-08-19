@@ -78,7 +78,7 @@ impl SplitAxis {
 
   /// Renders splits according to the given [`SplitSeperator`].
   /// Enter `SplitSeperator::Bottom` when rendering `Vertical` splits and use `SplitSeperator::Right` when rendering `Horizontal` splits.
-  pub fn render(&self, frame: &mut Frame, seperator: SplitSeperator) {
+  pub fn render_widget(&self, frame: &mut Frame, seperator: SplitSeperator) {
     let seperator = seperator.as_borders();
     for (i, chunk) in self.splits.iter().enumerate() {
       let borders = if (i + 1) < self.splits.len() {
