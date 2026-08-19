@@ -1,5 +1,5 @@
 use crate::ui::{Tui, splits::Splits};
-use ratatui::DefaultTerminal;
+use ratatui::{DefaultTerminal, style::Style};
 use std::{error::Error, result::Result};
 
 impl Tui {
@@ -18,6 +18,7 @@ impl Tui {
       terminal.draw(|frame| {
         self.screen_area = frame.area();
         Splits::render(&mut self.splits, frame);
+        frame.buffer_mut()[(0, 0)].set_style(Style::default().bg(ratatui::style::Color::White).fg(ratatui::style::Color::Black));
       })?;
       if self.process_input()? {
         break Ok(());
