@@ -2,6 +2,9 @@ use crate::{action::IoSignal, ui::Tui};
 use std::error::Error;
 impl Tui {
   pub fn process_input(&mut self) -> std::result::Result<bool, Box<dyn Error>> {
+
+    // Immediate mode tui calculates on every frame.
+    // Never call draw logic here.
     match Self::handle_input() {
       Ok(IoSignal::Quit) => Ok(true),
 
