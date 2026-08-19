@@ -63,12 +63,12 @@ impl SplitAxis {
   }
 
   /// Splits current buffer into equal splits according to the given [`Direction`] i.e only `Vertical` and `Horizontal`.
-  pub fn split(&mut self, screen_area: Rect, direction: Direction) {
+  pub fn split(&mut self, frame_area: Rect, direction: Direction) {
     let constraints = vec![Constraint::Ratio(1, self.count); self.count as usize];
     self.splits = ratatui::layout::Layout::default()
       .direction(direction)
       .constraints(constraints)
-      .split(screen_area)
+      .split(frame_area)
       .to_vec()
   }
 
