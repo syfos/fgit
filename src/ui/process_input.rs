@@ -24,12 +24,13 @@ impl Tui {
       }
 
       Ok(IoSignal::DelVsplit) => {
+        self.splits.vertical.decrement_count();
         self.splits.vertical.del_split();
-
         Ok(false)
       }
       Ok(IoSignal::DelHsplit) => {
-        self.splits.vertical.del_split();
+        self.splits.horizontal.decrement_count();
+        self.splits.horizontal.del_split();
         Ok(false)
       }
 
