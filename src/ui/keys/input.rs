@@ -27,7 +27,7 @@ impl Tui {
             match next.code {
               KeyCode::Char('v') => return Ok(IoSignal::DelVsplit),
               KeyCode::Char('h') => return Ok(IoSignal::DelHsplit),
-              _ => {},
+              _ => {}
             }
           }
         }

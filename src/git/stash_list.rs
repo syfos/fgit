@@ -1,6 +1,6 @@
-use std::result;
 use crate::git::Git;
 use git2::{Oid, Repository};
+use std::result;
 
 #[allow(dead_code)]
 pub struct StashData {

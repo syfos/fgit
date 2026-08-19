@@ -3,7 +3,6 @@ use std::result::Result;
 use crate::git::Git;
 use git2::Repository;
 
-
 #[allow(dead_code)]
 pub struct BranchesContainer {
   pub vector_branches: Vec<String>,
