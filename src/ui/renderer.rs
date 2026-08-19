@@ -1,6 +1,4 @@
-use crate::{
-  ui::{Tui, splits::SplitSeperator},
-};
+use crate::ui::{Tui, splits::SplitSeperator};
 use ratatui::DefaultTerminal;
 use std::{error::Error, result::Result};
 
@@ -20,16 +18,14 @@ impl Tui {
       terminal.draw(|frame| {
         self.screen_area = frame.area();
 
-        if !self.splits.vertical.splits.is_empty() {
-          self.splits.vertical.render(frame, SplitSeperator::Bottom);
-        }
+        self.splits.vertical.render(frame, SplitSeperator::Bottom);
 
-        if !self.splits.horizontal.splits.is_empty() {
-          self.splits.horizontal.render(frame, SplitSeperator::Right);
-        }
+        self.splits.horizontal.render(frame, SplitSeperator::Right);
       })?;
       if self.process_input()? {
         break Ok(());
+      } else {
+        continue;
       }
     }
   }
