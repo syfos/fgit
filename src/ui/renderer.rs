@@ -17,9 +17,17 @@ impl Tui {
     loop {
       terminal.draw(|frame| {
         self.screen_area = frame.area();
+        self
+          .splits
+          .vertical
+          .split(self.screen_area, ratatui::layout::Direction::Vertical);
+
+        self
+          .splits
+          .horizontal
+          .split(self.screen_area, ratatui::layout::Direction::Horizontal);
 
         self.splits.vertical.render(frame, SplitSeperator::Bottom);
-
         self.splits.horizontal.render(frame, SplitSeperator::Right);
       })?;
       if self.process_input()? {

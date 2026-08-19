@@ -7,19 +7,11 @@ impl Tui {
 
       Ok(IoSignal::Vsplit) => {
         self.splits.vertical.increment_count();
-        self
-          .splits
-          .vertical
-          .split(self.screen_area, ratatui::layout::Direction::Vertical);
         Ok(false)
       }
 
       Ok(IoSignal::Hsplit) => {
         self.splits.horizontal.increment_count();
-        self
-          .splits
-          .horizontal
-          .split(self.screen_area, ratatui::layout::Direction::Horizontal);
         Ok(false)
       }
 
