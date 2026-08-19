@@ -92,3 +92,21 @@ impl SplitAxis {
     }
   }
 }
+
+impl Splits {
+  fn calculate(&mut self, frame_area: Rect) {
+    self
+      .vertical
+      .split(frame_area, ratatui::layout::Direction::Vertical);
+
+    self
+      .horizontal
+      .split(frame_area, ratatui::layout::Direction::Horizontal);
+  }
+
+  pub fn render(&mut self, frame: &mut Frame) {
+    self.calculate(frame.area());
+    self.vertical.render_widget(frame, SplitSeperator::Bottom);
+    self.horizontal.render_widget(frame, SplitSeperator::Right);
+  }
+}
