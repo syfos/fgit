@@ -23,6 +23,16 @@ impl Tui {
         Ok(false)
       }
 
+      Ok(IoSignal::DelVsplit) => {
+        self.splits.vertical.del_split();
+
+        Ok(false)
+      }
+      Ok(IoSignal::DelHsplit) => {
+        self.splits.vertical.del_split();
+        Ok(false)
+      }
+
       // Handle io error
       Err(e) => Err(e),
 
