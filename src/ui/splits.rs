@@ -47,13 +47,21 @@ impl SplitAxis {
   ///
   /// On second sequence this will increment `only by 1`.
   pub fn increment_count(&mut self) {
-    if self.count == 0 {
+    if self.splits.is_empty() {
       self.count = self.count.saturating_add(2);
     } else {
       self.count = self.count.saturating_add(1);
     }
   }
-  ///
+
+  pub fn decrement_count(&mut self) {
+    if self.splits.len() == 2 {
+      self.count = self.count.saturating_sub(2);
+    } else {
+      self.count = self.count.saturating_sub(1);
+    }
+  }
+
   /// Splits current buffer into equal splits according to the given [`Direction`] i.e only `Vertical` and `Horizontal`.
   pub fn split(&mut self, screen_area: Rect, direction: Direction) {
     let constraints = vec![Constraint::Ratio(1, self.count); self.count as usize];
