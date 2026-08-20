@@ -4,7 +4,7 @@ use std::error::Error;
 
 impl Tui {
   /// Returns `stdin` translated into [`IoSignal`].
-  pub fn handle_input() -> std::result::Result<IoSignal, Box<dyn Error>> {
+  pub fn handle_input(&mut self) -> std::result::Result<IoSignal, Box<dyn Error>> {
     if let Event::Key(key) = crossterm::event::read()? {
       match key.code {
         KeyCode::Char('q') if key.modifiers == KeyModifiers::CONTROL => {
@@ -31,6 +31,11 @@ impl Tui {
             }
           }
         }
+
+        KeyCode::Char('l') | KeyCode::Right => return Ok(IoSignal::Right),
+        KeyCode::Char('h') | KeyCode::Left => return Ok(IoSignal::Left),
+        KeyCode::Char('j') | KeyCode::Down => return Ok(IoSignal::Down),
+        KeyCode::Char('k') | KeyCode::Up => return Ok(IoSignal::Up),
 
         _ => {}
       }
