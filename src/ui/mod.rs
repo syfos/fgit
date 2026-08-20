@@ -16,6 +16,8 @@ pub struct Tui {
   pub screen_area: Rect,
   pub splits: Splits,
   pub event_manager: EventManager,
+  pub cursor_col: u16,
+  pub cursor_row: u16,
 }
 
 impl Tui {
@@ -25,6 +27,8 @@ impl Tui {
       screen_area: Rect::default(),
       splits: Splits::default(),
       event_manager: EventManager::default(),
+      cursor_col: 0,
+      cursor_row: 0,
     }
   }
 }
