@@ -29,6 +29,10 @@ pub enum IoSignal {
   Hsplit,
   DelVsplit,
   DelHsplit,
+  Left,
+  Right,
+  Up,
+  Down,
   Quit,
   None,
 }
