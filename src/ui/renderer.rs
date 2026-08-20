@@ -19,6 +19,10 @@ impl Tui {
       terminal.draw(|frame| {
         self.screen_area = frame.area();
         Splits::render(&mut self.splits, frame);
+
+        // buffer_mut gives mut ref of buffer
+        // [(self.cursor_col, self.cursor_row)] means access the given cell.
+        // Note that every (cursor_col, cursor_row) is a cell
         frame.buffer_mut()[(self.cursor_col, self.cursor_row)]
           .set_style(Style::default().bg(Color::White).fg(Color::Black));
       })?;
