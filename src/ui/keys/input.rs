@@ -37,6 +37,10 @@ impl Tui {
         KeyCode::Char('j') | KeyCode::Down => return Ok(IoSignal::Down),
         KeyCode::Char('k') | KeyCode::Up => return Ok(IoSignal::Up),
 
+        KeyCode::Char(char) => {
+          self.editor.push_char(char);
+          self.editor.cursor.0 = self.editor.cursor.0.saturating_add(1);
+        }
         _ => {}
       }
     }
