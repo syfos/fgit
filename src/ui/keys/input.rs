@@ -41,6 +41,12 @@ impl Tui {
           self.editor.push_char(char);
           self.editor.cursor.0 = self.editor.cursor.0.saturating_add(1);
         }
+
+        KeyCode::Backspace => {
+          self.editor.remove_char();
+          self.editor.cursor.0 = self.editor.cursor.0.saturating_sub(1);
+        }
+
         _ => {}
       }
     }
