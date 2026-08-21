@@ -15,4 +15,12 @@ impl Editor {
   pub fn push_char(&mut self, char: char) {
     self.line.0.insert(self.cursor.1 as usize, char);
   }
+  pub fn remove_char(&mut self) {
+    if self.line.0.is_empty() {
+      self.cursor.1 = self.cursor.1.saturating_sub(1);
+    } else {
+      self.line.0.remove(self.cursor.1 as usize);
+      self.cursor.1 = self.cursor.1.saturating_sub(1);
+    }
+  }
 }
