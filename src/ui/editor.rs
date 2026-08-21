@@ -7,7 +7,7 @@ pub struct Editor {
 #[derive(Default)]
 pub struct Line(pub Vec<char>);
 
-/// The cursor position in `(row, col)` format.
+/// The cursor position in `(col, row)` format.
 #[derive(Default, Clone, Copy)]
 pub struct Cursor(pub usize, pub usize);
 
