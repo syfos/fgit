@@ -23,7 +23,7 @@ impl Tui {
         // buffer_mut gives mut ref of buffer
         // [(self.cursor_col, self.cursor_row)] means access the given cell.
         // Note that every (cursor_col, cursor_row) is a cell
-        frame.buffer_mut()[(self.editor.cursor_col, self.editor.cursor_row)]
+        frame.buffer_mut()[(self.editor.cursor.1 as u16, self.editor.cursor.0 as u16)]
           .set_style(Style::default().bg(Color::White).fg(Color::Black));
       })?;
 
