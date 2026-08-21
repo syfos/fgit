@@ -1,6 +1,7 @@
 #[derive(Default)]
 pub struct Editor {
   pub line: Line,
+  /// current position of cursor in `(col, row)` format
   pub cursor: Cursor,
 }
 
