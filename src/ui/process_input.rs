@@ -29,20 +29,20 @@ impl Tui {
       }
 
       Ok(IoSignal::Up) => {
-        self.cursor_row = self.cursor_row.saturating_sub(1);
+        self.editor.cursor_row = self.editor.cursor_row.saturating_sub(1);
         Ok(false)
       }
       Ok(IoSignal::Down) => {
-        self.cursor_row = self.cursor_row.saturating_add(1);
+        self.editor.cursor_row = self.editor.cursor_row.saturating_add(1);
         Ok(false)
       }
       Ok(IoSignal::Left) => {
-        self.cursor_col = self.cursor_col.saturating_sub(1);
+        self.editor.cursor_col = self.editor.cursor_col.saturating_sub(1);
 
         Ok(false)
       }
       Ok(IoSignal::Right) => {
-        self.cursor_col = self.cursor_col.saturating_add(1);
+        self.editor.cursor_col = self.editor.cursor_col.saturating_add(1);
         Ok(false)
       }
 
