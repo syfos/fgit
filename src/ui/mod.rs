@@ -1,6 +1,6 @@
 use crate::{
   action::EventManager,
-  ui::{buffer::ParentBuf, splits::Splits},
+  ui::{buffer::ParentBuf, editor::Editor, splits::Splits},
 };
 use ratatui::layout::Rect;
 
@@ -9,6 +9,7 @@ pub mod keys;
 pub mod process_input;
 pub mod renderer;
 pub mod splits;
+pub mod editor;
 
 /// Tui module of Fgit.
 pub struct Tui {
@@ -16,8 +17,7 @@ pub struct Tui {
   pub screen_area: Rect,
   pub splits: Splits,
   pub event_manager: EventManager,
-  pub cursor_col: u16,
-  pub cursor_row: u16,
+  pub editor: Editor,
 }
 
 impl Tui {
@@ -27,8 +27,7 @@ impl Tui {
       screen_area: Rect::default(),
       splits: Splits::default(),
       event_manager: EventManager::default(),
-      cursor_col: 0,
-      cursor_row: 0,
+      editor: Editor::default(),
     }
   }
 }
