@@ -19,10 +19,11 @@ pub struct Cursor(pub usize, pub usize);
 impl Editor {
   pub fn push_char(&mut self, char: char) {
     if self.line.0.is_empty() {
-      self.cursor.0 = 0;
       self.line.0.insert(0, char);
       self.cursor.0 = self.cursor.0.saturating_add(1);
-    } else if self.line.0.len() > self.cursor.0 {
+    }
+
+    if self.line.0.len() > self.cursor.0 {
       self.line.0.insert(self.cursor.0, char);
       self.cursor.0 = self.cursor.0.saturating_add(1);
     } else {
@@ -31,6 +32,12 @@ impl Editor {
     }
   }
   pub fn remove_char(&mut self) {
+    if self.cursor.0 != 0 {
+      self.line.0.remove(self.cursor.0.saturating_sub(1));
+      self.decrement_col_by(1);
+    }
+  }
+
   pub fn increment_col_by(&mut self, col: usize) {
     if !self.line.0.is_empty() {
       self.cursor.0 = self.cursor.0.saturating_add(col).min(self.line.0.len());
