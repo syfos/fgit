@@ -31,9 +31,21 @@ impl Editor {
     }
   }
   pub fn remove_char(&mut self) {
+  pub fn increment_col_by(&mut self, col: usize) {
     if !self.line.0.is_empty() {
-      self.line.0.remove(self.cursor.0);
+      self.cursor.0 = self.cursor.0.saturating_add(col).min(self.line.0.len());
     }
+  }
+  pub fn decrement_col_by(&mut self, col: usize) {
+    self.cursor.0 = self.cursor.0.saturating_sub(col);
+  }
+
+  pub fn increment_row_by(&mut self, row: usize) {
+    self.cursor.1 = self.cursor.1.saturating_add(row);
+  }
+
+  pub fn decrement_row_by(&mut self, row: usize) {
+    self.cursor.1 = self.cursor.1.saturating_sub(row);
   }
 
   pub fn render(&self, frame: &mut Frame, area: Rect) {
