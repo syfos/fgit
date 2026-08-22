@@ -29,22 +29,22 @@ impl Tui {
       }
 
       Ok(IoSignal::Up) => {
-        self.editor.cursor.1 = self.editor.cursor.1.saturating_sub(1);
+        self.editor.decrement_row_by(1);
         Ok(false)
       }
 
       Ok(IoSignal::Down) => {
-        self.editor.cursor.1 = self.editor.cursor.1.saturating_add(1);
+        self.editor.increment_row_by(1);
         Ok(false)
       }
 
       Ok(IoSignal::Left) => {
-        self.editor.cursor.0 = self.editor.cursor.0.saturating_sub(1);
+        self.editor.decrement_col_by(1);
         Ok(false)
       }
 
       Ok(IoSignal::Right) => {
-        self.editor.cursor.0 = self.editor.cursor.0.saturating_add(1);
+        self.editor.increment_col_by(1);
         Ok(false)
       }
 
