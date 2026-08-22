@@ -22,11 +22,11 @@ impl Editor {
       self.cursor.0 = 0;
       self.line.0.insert(0, char);
       self.cursor.0 = self.cursor.0.saturating_add(1);
-    } else if self.cursor.0 > self.line.0.len() - 1 {
-      self.line.0.push(char);
-      self.cursor.0 = self.line.0.len();
-    } else if self.cursor.0 <= self.line.0.len() - 1 {
-      self.line.0.push(char);
+    } else if self.line.0.len() > self.cursor.0 {
+      self.line.0.insert(self.cursor.0, char);
+      self.cursor.0 = self.cursor.0.saturating_add(1);
+    } else {
+      self.line.0.insert(self.cursor.0, char);
       self.cursor.0 = self.line.0.len();
     }
   }
