@@ -1,3 +1,7 @@
+use ratatui::style::Color;
+use ratatui::style::Style;
+use ratatui::{Frame, layout::Rect};
+
 #[derive(Default)]
 pub struct Editor {
   pub line: Line,
@@ -20,5 +24,20 @@ impl Editor {
     if !self.line.0.is_empty() {
       self.line.0.remove(self.cursor.0);
     }
+  }
+
+  pub fn render(&self, frame: &mut Frame, area: Rect) {
+    // draw each character
+    for (i, ch) in self.line.0.iter().enumerate() {
+      let x = area.x + i as u16;
+      let y = area.y + self.cursor.1 as u16;
+      frame.buffer_mut()[(x, y)].set_char(*ch);
+    }
+
+    // draw cursor on top — note: if cursor is past the last char,
+    // this cell just shows a blank space with inverted colors
+    let cx = area.x + self.cursor.0 as u16;
+    let cy = area.y + self.cursor.1 as u16;
+    frame.buffer_mut()[(cx, cy)].set_style(Style::default().bg(Color::White).fg(Color::Black));
   }
 }
