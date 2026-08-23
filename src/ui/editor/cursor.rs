@@ -58,7 +58,7 @@ impl Editor {
     self.cursor.1 = self.cursor.1.saturating_sub(row);
   }
 
-  pub fn render(&self, frame: &mut Frame, area: Rect) {
+  pub fn render_cursor(&self, frame: &mut Frame, area: Rect) {
     // draw each character
     for (i, ch) in self.line.0.iter().enumerate() {
       let x = area.x + i as u16;
