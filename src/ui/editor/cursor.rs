@@ -6,7 +6,7 @@ use crate::ui::editor::Editor;
 
 #[allow(clippy::needless_return)]
 impl Editor {
-  /// Push the typed `char` to `current col` at which cursor is.
+  /// Push the typed `char` to `current col` of current line at which cursor is.
   pub fn push_char(&mut self, char: char) {
     if self.line.0.is_empty() {
       self.line.0.insert(0, char);
@@ -31,6 +31,7 @@ impl Editor {
       self.increment_col_by(1);
     }
   }
+
   pub fn remove_char(&mut self) {
     if self.cursor.0 != 0 {
       self.line.0.remove(self.cursor.0.saturating_sub(1));
