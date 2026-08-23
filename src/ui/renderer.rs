@@ -1,7 +1,6 @@
 use crate::ui::editor::Editor;
 use crate::ui::{Tui, splits::Splits};
-use ratatui::style::Color;
-use ratatui::{DefaultTerminal, style::Style};
+use ratatui::DefaultTerminal;
 use std::{error::Error, result::Result};
 
 impl Tui {
