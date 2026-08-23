@@ -56,9 +56,9 @@ impl Editor {
     self.cursor.1 = self.cursor.1.saturating_add(row);
   }
 
-  /// Decrement cursor row by given number.
+  /// Decrement cursor row by given number, clamp at zero.
   pub fn decrement_row_by(&mut self, row: usize) {
-    self.cursor.1 = self.cursor.1.saturating_sub(row);
+      self.cursor.1 = self.cursor.1.saturating_sub(row);
   }
 
   /// Render the cursor.
