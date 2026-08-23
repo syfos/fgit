@@ -6,6 +6,7 @@ use crate::ui::editor::Editor;
 
 #[allow(clippy::needless_return)]
 impl Editor {
+  /// Push the typed `char` to `current col` at which cursor is.
   pub fn push_char(&mut self, char: char) {
     if self.line.0.is_empty() {
       self.line.0.insert(0, char);
