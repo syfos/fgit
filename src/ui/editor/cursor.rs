@@ -32,6 +32,7 @@ impl Editor {
     }
   }
 
+  /// Remove the `char` at `current col` of current line at which cursor is.
   pub fn remove_char(&mut self) {
     if self.cursor.0 != 0 {
       self.line.0.remove(self.cursor.0.saturating_sub(1));
