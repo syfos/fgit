@@ -20,12 +20,12 @@ impl Editor {
   pub fn push_char(&mut self, char: char) {
     if self.line.0.is_empty() {
       self.line.0.insert(0, char);
-      self.cursor.0 = self.cursor.0.saturating_add(1);
+      self.increment_col_by(1);
     }
 
     if self.line.0.len() > self.cursor.0 {
       self.line.0.insert(self.cursor.0, char);
-      self.cursor.0 = self.cursor.0.saturating_add(1);
+      self.increment_col_by(1);
     } else {
       self.line.0.insert(self.cursor.0, char);
       self.cursor.0 = self.line.0.len();
