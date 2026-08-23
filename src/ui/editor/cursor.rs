@@ -42,9 +42,7 @@ impl Editor {
   }
 
   pub fn increment_col_by(&mut self, col: usize) {
-    if !self.line.0.is_empty() {
-      self.cursor.0 = self.cursor.0.saturating_add(col).min(self.line.0.len());
-    }
+    self.cursor.0 = self.cursor.0.saturating_add(col).min(self.line.0.len());
   }
   pub fn decrement_col_by(&mut self, col: usize) {
     self.cursor.0 = self.cursor.0.saturating_sub(col);
