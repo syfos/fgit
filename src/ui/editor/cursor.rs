@@ -53,7 +53,7 @@ impl Editor {
 
   /// Increment cursor row by given number.
   pub fn increment_row_by(&mut self, row: usize) {
-    self.cursor.1 = self.cursor.1.saturating_add(row);
+    self.cursor.1 = self.cursor.1.saturating_add(row).min(self.buffer.0.len());
   }
 
   /// Decrement cursor row by given number, clamp at zero.
