@@ -44,7 +44,7 @@ impl Tui {
       }
 
       Ok(IoSignal::Right) => {
-        self.editor.increment_col_by(1);
+        self.editor.increment_cursor_col_by(1);
         Ok(false)
       }
 

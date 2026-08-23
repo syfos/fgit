@@ -10,25 +10,25 @@ impl Editor {
   pub fn push_char(&mut self, char: char) {
     if self.line.0.is_empty() {
       self.line.0.insert(0, char);
-      self.increment_col_by(1);
+      self.increment_cursor_col_by(1);
       return;
     }
 
     if self.line.0.len() == 1 {
       self.line.0.insert(self.cursor.0, char);
-      self.increment_col_by(1);
+      self.increment_cursor_col_by(1);
       return;
     }
 
     if self.line.0.len() > self.cursor.0 {
       self.line.0.insert(self.cursor.0, char);
-      self.increment_col_by(1);
+      self.increment_cursor_col_by(1);
       return;
     }
 
     if self.line.0.len() == self.cursor.0 {
       self.line.0.push(char);
-      self.increment_col_by(1);
+      self.increment_cursor_col_by(1);
     }
   }
 
@@ -41,7 +41,7 @@ impl Editor {
     }
   }
 
-  pub fn increment_col_by(&mut self, col: usize) {
+  pub fn increment_cursor_col_by(&mut self, col: usize) {
     self.cursor.0 = self.cursor.0.saturating_add(col).min(self.line.0.len());
   }
   pub fn decrement_col_by(&mut self, col: usize) {
