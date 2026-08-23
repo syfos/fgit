@@ -19,7 +19,7 @@ impl Tui {
       terminal.draw(|frame| {
         self.screen_area = frame.area();
         Splits::render(&mut self.splits, frame);
-        Editor::render(&self.editor, frame, self.screen_area);
+        Editor::render_cursor(&self.editor, frame, self.screen_area);
 
         // buffer_mut gives mut ref of buffer
         // [(self.cursor_col, self.cursor_row)] means access the given cell.
