@@ -41,17 +41,22 @@ impl Editor {
     }
   }
 
+  /// Increment cursor column by the given number but clamp it at the length of line.
   pub fn increment_cursor_col_by(&mut self, col: usize) {
     self.cursor.0 = self.cursor.0.saturating_add(col).min(self.line.0.len());
   }
+
+  /// Decrement cursor col by given number, clamps at 0.
   pub fn decrement_col_by(&mut self, col: usize) {
     self.cursor.0 = self.cursor.0.saturating_sub(col);
   }
 
+  /// Increment cursor row by given number.
   pub fn increment_row_by(&mut self, row: usize) {
     self.cursor.1 = self.cursor.1.saturating_add(row);
   }
 
+  /// Decrement cursor row by given number.
   pub fn decrement_row_by(&mut self, row: usize) {
     self.cursor.1 = self.cursor.1.saturating_sub(row);
   }
