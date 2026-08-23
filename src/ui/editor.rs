@@ -16,25 +16,37 @@ pub struct Line(pub Vec<char>);
 #[derive(Default, Clone, Copy)]
 pub struct Cursor(pub usize, pub usize);
 
+#[allow(clippy::needless_return)]
 impl Editor {
   pub fn push_char(&mut self, char: char) {
     if self.line.0.is_empty() {
       self.line.0.insert(0, char);
       self.increment_col_by(1);
+      return;
+    }
+
+    if self.line.0.len() == 1 {
+      self.line.0.insert(self.cursor.0, char);
+      self.increment_col_by(1);
+      return;
     }
 
     if self.line.0.len() > self.cursor.0 {
       self.line.0.insert(self.cursor.0, char);
       self.increment_col_by(1);
-    } else {
-      self.line.0.insert(self.cursor.0, char);
-      self.cursor.0 = self.line.0.len();
+      return;
+    }
+
+    if self.line.0.len() == self.cursor.0 {
+      self.line.0.push(char);
+      self.increment_col_by(1);
     }
   }
   pub fn remove_char(&mut self) {
     if self.cursor.0 != 0 {
       self.line.0.remove(self.cursor.0.saturating_sub(1));
       self.decrement_col_by(1);
+      return;
     }
   }
 
