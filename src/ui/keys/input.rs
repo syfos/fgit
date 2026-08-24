@@ -45,6 +45,10 @@ impl Tui {
           self.editor.remove_char();
         }
 
+        KeyCode::Enter => {
+          self.editor.create_new_line(); 
+        }
+
         _ => {}
       }
     }
