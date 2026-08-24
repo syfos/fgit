@@ -68,7 +68,7 @@ impl Editor {
   }
 
   /// Render the cursor.
-  pub fn render_cursor(&self, frame: &mut Frame, area: Rect) {
+  pub fn render_cursor_and_buffer(&self, frame: &mut Frame, area: Rect) {
     // draw each character
     for (i, ch) in self.line.0.iter().enumerate() {
       let x = area.x + i as u16;
