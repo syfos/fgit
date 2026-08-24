@@ -42,4 +42,30 @@ impl Editor {
     &mut self.buffer.0.get_mut(self.cursor.1).unwrap().0
   }
 
+  pub fn render_buffer(&self, frame: &mut Frame, area: Rect) {
+    let start_row = 0; // later: calculate from scroll offset
+    let end_row = (start_row + area.height as usize).min(self.buffer.0.len());
+
+    for (screen_row, line) in self.buffer.0[start_row..end_row].iter().enumerate() {
+      let y = area.y + screen_row as u16;
+
+      for (col, ch) in line.0.iter().enumerate() {
+        if col >= area.width as usize {
+          break;
+        }
+
+        let x = area.x + col as u16;
+
+        frame.buffer_mut()[(x, y)].set_char(*ch);
+      }
+    }
+
+    // Cursor
+    let cx = area.x + self.cursor.0 as u16;
+    let cy = area.y + (self.cursor.1 - start_row) as u16;
+
+    if cx < area.x + area.width && cy < area.y + area.height {
+      frame.buffer_mut()[(cx, cy)].set_style(Style::default().bg(Color::White).fg(Color::Black));
+    }
+  }
 }
