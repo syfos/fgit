@@ -18,4 +18,10 @@ impl Editor {
     line.insert(idx, char);
   }
 
+  /// Removes specific index of cursor line.
+  pub fn remove(&mut self, idx: usize) {
+    let line = self.mut_ref_cursor_line();
+    line.remove(idx);
+  }
+
 }
