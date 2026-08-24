@@ -34,7 +34,7 @@ impl Tui {
       }
 
       Ok(IoSignal::Down) => {
-        self.editor.increment_row_by(1);
+        self.editor.increment_cursor_row_by(1);
         Ok(false)
       }
 
