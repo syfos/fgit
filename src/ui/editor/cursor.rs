@@ -8,24 +8,28 @@ use crate::ui::editor::Editor;
 impl Editor {
   /// Push the typed `char` to `current col` of current line at which cursor is.
   pub fn push_char(&mut self, char: char) {
+    // Insert char at index 0 if line is empty
     if self.line.0.is_empty() {
       self.line.0.insert(0, char);
       self.increment_cursor_col_by(1);
       return;
     }
 
+    // Insert char at cursor position
     if self.line.0.len() == 1 {
       self.line.0.insert(self.cursor.0, char);
       self.increment_cursor_col_by(1);
       return;
     }
 
+    // Insert char at cursor position when cursor is inside line width.
     if self.line.0.len() > self.cursor.0 {
       self.line.0.insert(self.cursor.0, char);
       self.increment_cursor_col_by(1);
       return;
     }
 
+    // if curosr is at the full width of line i.e the last column of line then push to create new index.
     if self.line.0.len() == self.cursor.0 {
       self.line.0.push(char);
       self.increment_cursor_col_by(1);
