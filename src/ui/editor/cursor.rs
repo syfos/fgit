@@ -36,7 +36,8 @@ impl Editor {
     }
   }
 
-  /// Remove the `char` at `current col` of current line at which cursor is.
+  /// Remove character which is one coloumn behind cursor.
+  /// For empty line if and only if [`Buffer`] is not empty nor it contains only one line then -> Move to the end of previous line joining the previous line with current one.
   pub fn remove_char(&mut self) {
     // Don't trigger when the line is empty
     if self.cursor.0 != 0 {
