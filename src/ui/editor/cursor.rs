@@ -38,6 +38,7 @@ impl Editor {
 
   /// Remove the `char` at `current col` of current line at which cursor is.
   pub fn remove_char(&mut self) {
+    // Don't trigger when the line is empty
     if self.cursor.0 != 0 {
       self.line.0.remove(self.cursor.0.saturating_sub(1));
       self.decrement_cursor_col_by(1);
