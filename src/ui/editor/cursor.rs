@@ -55,7 +55,7 @@ impl Editor {
     self.cursor.0 = self.cursor.0.saturating_sub(col);
   }
 
-  /// Increment cursor row by given number.
+  /// Increment cursor row by given number, clamps at max length of Buffer i.e at the last line.
   pub fn increment_row_by(&mut self, row: usize) {
     self.cursor.1 = self.cursor.1.saturating_add(row).min(self.buffer.0.len());
   }
