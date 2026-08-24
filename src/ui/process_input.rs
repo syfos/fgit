@@ -39,7 +39,7 @@ impl Tui {
       }
 
       Ok(IoSignal::Left) => {
-        self.editor.decrement_col_by(1);
+        self.editor.decrement_cursor_col_by(1);
         Ok(false)
       }
 

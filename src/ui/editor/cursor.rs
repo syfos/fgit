@@ -40,7 +40,7 @@ impl Editor {
   pub fn remove_char(&mut self) {
     if self.cursor.0 != 0 {
       self.line.0.remove(self.cursor.0.saturating_sub(1));
-      self.decrement_col_by(1);
+      self.decrement_cursor_col_by(1);
       return;
     }
   }
@@ -51,7 +51,7 @@ impl Editor {
   }
 
   /// Decrement cursor col by given number, clamps at 0.
-  pub fn decrement_col_by(&mut self, col: usize) {
+  pub fn decrement_cursor_col_by(&mut self, col: usize) {
     self.cursor.0 = self.cursor.0.saturating_sub(col);
   }
 
