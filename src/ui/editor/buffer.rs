@@ -24,4 +24,22 @@ impl Editor {
     line.remove(idx);
   }
 
+  /// Returns the refrence of cursor line vector.
+  pub fn ref_cursor_line(&mut self) -> &Vec<char> {
+    if self.buffer.0.is_empty() {
+      self.buffer.0.insert(0, Line::default());
+      return &self.buffer.0.first().unwrap().0;
+    }
+    &self.buffer.0.get(self.cursor.1).unwrap().0
+  }
+
+  /// Returns the `mut` refrence of cursor line vector.
+  pub fn mut_ref_cursor_line(&mut self) -> &mut Vec<char> {
+    if self.buffer.0.is_empty() {
+      // self.buffer.0.insert(0, Line::default());
+      return &mut self.buffer.0.get_mut(0).unwrap().0;
+    }
+    &mut self.buffer.0.get_mut(self.cursor.1).unwrap().0
+  }
+
 }
