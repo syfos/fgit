@@ -5,6 +5,7 @@ pub mod edit;
 
 #[derive(Default)]
 pub struct Editor {
+  pub scroll_offset: usize,
   pub rope: Rope,
   /// current position of cursor in `(col, row)` format
   pub cursor: Cursor,
