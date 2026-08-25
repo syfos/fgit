@@ -1,10 +1,14 @@
+use ropey::Rope;
+
 pub mod buffer;
 pub mod cursor;
+pub mod edit;
 
 #[derive(Default)]
 pub struct Editor {
   pub buffer: Buffer,
   pub line: Line,
+  pub doc: Rope,
   /// current position of cursor in `(col, row)` format
   pub cursor: Cursor,
 }
