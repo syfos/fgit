@@ -14,12 +14,10 @@ fn string_to_path(path_string: &str) -> anyhow::Result<PathBuf> {
 }
 
 fn main() -> anyhow::Result<()> {
-  let rope = Rope::from_reader(BufReader::new(fs::File::open(string_to_path(
+  let mut rope = Rope::from_reader(BufReader::new(fs::File::open(string_to_path(
     "~/impl/rust/fgit/src/bin/txt.txt",
   )?)?))?;
-  let char_len = rope.line(0).len_chars();
-  println!("Char len: {char_len}");
-  println!("Line: {:?}",rope.line(0).to_string());
-  // println!("Line: {:?}",rope.line(1).to_string());
+  rope.insert_char(rope.line_to_char(0) + 4, '\n');
+  println!("{rope:?}");
   Ok(())
 }
