@@ -38,7 +38,7 @@ impl Tui {
         KeyCode::Char('k') | KeyCode::Up => return Ok(IoSignal::Up),
 
         KeyCode::Char(char) => {
-          self.editor.push_char(char);
+          self.editor.insert_char(char);
         }
 
         KeyCode::Backspace => {
@@ -46,7 +46,7 @@ impl Tui {
         }
 
         KeyCode::Enter => {
-          self.editor.create_new_line(); 
+          self.editor.new_line(); 
         }
 
         _ => {}
