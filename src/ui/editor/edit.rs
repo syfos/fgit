@@ -1,10 +1,3 @@
-use ratatui::{
-  Frame,
-  layout::{Position, Rect},
-  text::{Line, Text},
-  widgets::Paragraph,
-};
-
 use crate::ui::editor::Editor;
 
 #[allow(dead_code)]
@@ -31,7 +24,5 @@ impl Editor {
     let cursor_idx = self.rope.line_to_char(self.cursor.1) + self.cursor.0;
     self.rope.remove(cursor_idx.saturating_sub(1)..cursor_idx);
     self.decrement_cursor_row(1);
-  }
-
   }
 }
