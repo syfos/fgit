@@ -13,7 +13,7 @@ impl Editor {
       .rope
       .insert_char(self.rope.line_to_char(self.cursor.1) + self.cursor.0, '\n');
     self.increment_cursor_row(1);
-    self.cursor.0 = self.rope.line(self.cursor.1).len_chars();
+    self.cursor.0 = 0;
   }
 
   pub fn remove_char(&mut self) {
