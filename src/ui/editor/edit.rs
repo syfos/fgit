@@ -11,8 +11,9 @@ impl Editor {
   pub fn new_line(&mut self) {
     self
       .rope
-      .insert_char(self.rope.line(self.cursor.1).len_chars(), '\n');
+      .insert_char(self.rope.line_to_char(self.cursor.1) + self.cursor.0, '\n');
     self.increment_cursor_row(1);
+    self.cursor.0 = self.rope.line(self.cursor.1).len_chars();
   }
 
   pub fn remove_char(&mut self) {
