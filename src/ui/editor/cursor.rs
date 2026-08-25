@@ -1,7 +1,3 @@
-use ratatui::style::Color;
-use ratatui::style::Style;
-use ratatui::{Frame, layout::Rect};
-
 use crate::ui::editor::Editor;
 
 #[allow(clippy::needless_return)]
