@@ -8,7 +8,7 @@ pub mod edit;
 pub struct Editor {
   pub buffer: Buffer,
   pub line: Line,
-  pub doc: Rope,
+  pub rope: Rope,
   /// current position of cursor in `(col, row)` format
   pub cursor: Cursor,
 }
