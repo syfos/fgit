@@ -27,6 +27,16 @@ impl Editor {
       self.decrement_cursor_col(1);
       return;
     }
+
+    if self.cursor.1 >= 1 && self.cursor.0 == 0 {
+      let prev_line = self.rope.line(self.cursor.1.saturating_sub(1));
+      let char_len = prev_line.len_chars();
+
+      let s = self.rope.line_to_char(self.cursor.1.saturating_sub(1)) + char_len;
+
+      self.rope.remove(s ..s.saturating_add(0));
+      self.decrement_cursor_row(1);
+      self.cursor.0 = char_len;
       return;
     }
 
