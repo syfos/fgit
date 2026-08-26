@@ -29,7 +29,7 @@ impl Editor {
 
       self.rope.remove(char_idx_of_previous_posix_line - 1..char_idx_of_previous_posix_line);
       self.decrement_cursor_row(1);
-      self.cursor.0 = char_len;
+      self.cursor.0 = char_len_of_prev_line_before_merge-1;
       return;
     }
 
