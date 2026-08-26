@@ -17,8 +17,9 @@ impl Editor {
   }
 
   pub fn remove_char(&mut self) {
-    let line = self.rope.line(self.cursor.1).to_string();
-    if line.is_empty() {
+    if self.cursor.1 == 0 && self.cursor.0 == 0 {
+      return;
+    }
       return;
     }
 
