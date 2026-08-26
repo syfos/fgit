@@ -27,7 +27,7 @@ impl Editor {
 
       let char_idx_of_previous_posix_line = self.rope.line_to_char(self.cursor.1.saturating_sub(1)) + char_len_of_prev_line_before_merge;
 
-      self.rope.remove(s ..s.saturating_add(0));
+      self.rope.remove(char_idx_of_previous_posix_line - 1..char_idx_of_previous_posix_line);
       self.decrement_cursor_row(1);
       self.cursor.0 = char_len;
       return;
