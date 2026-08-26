@@ -9,9 +9,13 @@ impl Editor {
   }
 
   pub fn new_line(&mut self) {
-    self
-      .rope
-      .insert_char(self.rope.line_to_char(self.cursor.1) + self.cursor.0, '\n');
+    // absolute index of cursor in whole document
+    let absolute_cursor_idx = self.rope.line_to_char(self.cursor.1) + self.cursor.0;
+
+    // this inserts line terminating char at cursor_idx
+    self.rope.insert_char(absolute_cursor_idx, '\n');
+
+    // move down and set cursor col to 0
     self.increment_cursor_row(1);
     self.cursor.0 = 0;
   }
