@@ -1,7 +1,12 @@
+use std::io::{self, Error, ErrorKind};
+use std::path::{Path, PathBuf};
+use std::{fs, io::BufReader};
+
 use ropey::Rope;
 
 pub mod cursor;
 pub mod edit;
+pub mod helper;
 pub mod render;
 
 #[derive(Default)]
