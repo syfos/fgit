@@ -29,11 +29,14 @@ impl Editor {
       let prev_line = self.rope.line(self.cursor.1.saturating_sub(1));
       let char_len_of_prev_line_before_merge = prev_line.len_chars();
 
-      let char_idx_of_previous_posix_line = self.rope.line_to_char(self.cursor.1.saturating_sub(1)) + char_len_of_prev_line_before_merge;
+      let char_idx_of_previous_posix_line = self.rope.line_to_char(self.cursor.1.saturating_sub(1))
+        + char_len_of_prev_line_before_merge;
 
-      self.rope.remove(char_idx_of_previous_posix_line - 1..char_idx_of_previous_posix_line);
+      self
+        .rope
+        .remove(char_idx_of_previous_posix_line - 1..char_idx_of_previous_posix_line);
       self.decrement_cursor_row(1);
-      self.cursor.0 = char_len_of_prev_line_before_merge-1;
+      self.cursor.0 = char_len_of_prev_line_before_merge - 1;
       return;
     }
 
