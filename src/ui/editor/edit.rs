@@ -16,7 +16,7 @@ impl Editor {
     self.rope.insert_char(absolute_cursor_idx, '\n');
 
     // move down and set cursor col to 0
-    self.increment_cursor_row(1);
+    self.cursor.1 += 1;
     self.cursor.0 = 0;
   }
 
