@@ -11,11 +11,14 @@ impl Editor {
 
   /// increment cursor row by the given number, clamp at last line.
   pub fn increment_cursor_row(&mut self, row: usize) {
-    self.cursor.1 = self
-      .cursor
-      .1
-      .saturating_add(row)
-      .min(self.rope.len_lines() - 1);
+    if self.rope.len_lines() != 0 && self.rope.len_lines() >= 1 {
+      self.cursor.1 = self
+        .cursor
+        .1
+        .saturating_add(row)
+        .min(self.rope.len_lines() - 1);
+      self.cursor.0 = self.rope.line(self.cursor.1).len_chars();
+    }
   }
 
   /// Decrement cursor column by given number, clamps at 0.
