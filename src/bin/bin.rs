@@ -18,6 +18,10 @@ fn main() -> anyhow::Result<()> {
     "~/impl/rust/fgit/src/bin/txt.txt",
   )?)?))?;
   rope.insert_char(rope.line_to_char(0) + 4, '\n');
-  println!("{rope:?}");
+  let lx1 = rope.line_to_char(0); 
+  let lx2 = rope.line_to_char(1); 
+
+  println!("{lx1}\n{lx2}");
+  // println!("{rope:?}");
   Ok(())
 }
