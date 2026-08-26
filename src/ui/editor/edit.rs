@@ -23,7 +23,7 @@ impl Editor {
 
     if self.cursor.1 >= 1 && self.cursor.0 == 0 {
       let prev_line = self.rope.line(self.cursor.1.saturating_sub(1));
-      let char_len = prev_line.len_chars();
+      let char_len_of_prev_line_before_merge = prev_line.len_chars();
 
       let s = self.rope.line_to_char(self.cursor.1.saturating_sub(1)) + char_len;
 
