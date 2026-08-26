@@ -12,7 +12,7 @@ pub struct App {
 impl App {
   pub fn new() -> Result<App, Box<dyn std::error::Error>> {
     Ok(App {
-      tui: Tui::new(),
+      tui: Tui::new()?,
       event_manager: EventManager::default(),
       watcher_signal: WatchSignals::spawn()?,
     })
