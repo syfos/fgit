@@ -14,8 +14,8 @@ impl Editor {
     let lines: Vec<ratatui::text::Line> = (start_line..end_line)
       .map(|i| {
         let rope_slice = self.rope.line(i).to_string();
-        let line = rope_slice.trim_end_matches('\n');
-        Line::raw(line.to_string())
+        let escaped = Self::escape_hidden_chars(&rope_slice);
+        Line::raw(escaped)
       })
       .collect();
 
@@ -27,4 +27,19 @@ impl Editor {
 
     frame.set_cursor_position(Position::new(screen_col, screen_row));
   }
+
+  fn escape_hidden_chars(s: &str) -> String {
+    let mut out = String::with_capacity(s.len());
+    for c in s.chars() {
+      match c {
+        '\n' => out.push_str("\\n"),
+        '\r' => out.push_str("\\r"),
+        '\t' => out.push_str("\\t"),
+        '\0' => out.push_str("\\0"),
+        _ => out.push(c),
+      }
+    }
+    out
+  }
 }
+
