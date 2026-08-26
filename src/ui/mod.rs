@@ -16,11 +16,11 @@ pub struct Tui {
 }
 
 impl Tui {
-  pub fn new() -> Self {
-    Self {
+  pub fn new() -> std::io::Result<Self> {
+    Ok(Self {
       screen_area: Rect::default(),
       splits: Splits::default(),
-      editor: Editor::default(),
-    }
+      editor: Editor::new()?,
+    })
   }
 }
