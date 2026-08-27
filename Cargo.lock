@@ -496,6 +496,8 @@ dependencies = [
  "ropey",
  "shellexpand",
  "textwrap",
+ "unicode-segmentation",
+ "unicode-width",
 ]
 
 [[package]]
