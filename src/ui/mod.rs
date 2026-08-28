@@ -7,6 +7,7 @@ pub mod keys;
 pub mod process_input;
 pub mod renderer;
 pub mod splits;
+pub mod unicode;
 
 /// Tui module of Fgit.
 pub struct Tui {
