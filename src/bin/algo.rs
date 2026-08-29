@@ -1,19 +1,11 @@
-use unicode_segmentation::UnicodeSegmentation;
-
+use unicode_normalization::{is_nfc, is_nfd};
 fn main() {
-  let range = get_grapheme_ranges("👨‍👨‍👧‍👦", &7);
-  println!("{:?}", range);
-}
+  // no nfd, no nfd (true, true) -- contains none
+  // is nfc, is nfd (false, false) -- contains both
+  // is nfc, no nfd (true, false) -- only nfc
+  // no nfc, is nfd (false, true) -- only nfd
+  let s = "café e\u{301}";
 
-pub fn get_grapheme_ranges(line: &str, line_to_char: &usize) -> Vec<std::ops::Range<usize>> {
-  let mut boundary = Vec::new();
-  let mut offset = 0usize;
-  for grapheme in line.graphemes(true) {
-    let grapheme_width = grapheme.chars().count();
-    let start = *line_to_char + offset;
-    offset += grapheme_width;
-    let end = *line_to_char + offset;
-    boundary.push(start..end);
-  }
-  boundary
+  println!("{}", is_nfc(s));
+  println!("{}", is_nfd(s));
 }
