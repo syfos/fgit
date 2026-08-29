@@ -1,4 +1,5 @@
-use unicode_segmentation::{GraphemeCursor, UnicodeSegmentation};
+use unicode_segmentation::UnicodeSegmentation;
+use unicode_width::UnicodeWidthStr;
 
 #[allow(dead_code)]
 pub struct Unicode;
@@ -14,11 +15,12 @@ impl Unicode {
     let mut boundary = Vec::new();
     let mut offset = 0usize;
     for grapheme in line.graphemes(true) {
-      let grapheme_width = grapheme.chars().count();
+      let grapheme_char_count = grapheme.chars().count();
       let start = *line_to_char + offset;
-      offset += grapheme_width;
+      offset += grapheme_char_count;
       let end = *line_to_char + offset;
       boundary.push(start..end);
+      let grapheme_width = grapheme.width();
     }
     boundary
   }
