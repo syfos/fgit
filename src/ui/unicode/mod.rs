@@ -60,6 +60,8 @@ impl Unicode {
     boundary
   }
   /// This function returns the `[CanonicalType]` of Normalization form of the given string.
+  ///
+  /// This function is purely for search/replace command.
   /// ```
   /// use unicode_normalization::{is_nfc, is_nfd};
   ///
@@ -87,5 +89,4 @@ impl Unicode {
       (false, false) => CanonicalType::Mix,
     }
   }
-
 }
