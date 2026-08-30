@@ -40,18 +40,21 @@ impl Unicode {
   /// with char index of line.
   /// This give you flexibility to preform well
   /// cordinated unicode aware operations.
-  pub fn get_grapheme_ranges(line: &str, line_to_char: &usize) -> Vec<GraphemeLine> {
+  pub fn get_grapheme_ranges(line: &str, line_to_char: &usize) -> Vec<Grapheme> {
     let mut boundary = Vec::new();
     let mut offset = 0usize;
+    let mut cumulative_net_width = 0usize;
     for grapheme in line.graphemes(true) {
-      let grapheme_char_count = grapheme.chars().count();
+      let grapheme_net_chars = grapheme.chars().count();
       let start = *line_to_char + offset;
-      offset += grapheme_char_count;
+      offset += grapheme_net_chars;
       let end = *line_to_char + offset;
-      let grapheme_width = grapheme.width();
-      boundary.push(GraphemeLine {
-        range: start..end,
-        width: grapheme_width,
+      let term_cell_width = grapheme.width();
+      cumulative_net_width += term_cell_width;
+      boundary.push(Grapheme {
+        rope_absolute_char_index_range: start..end,
+        term_cell_width,
+        cumulative_net_width,
       });
     }
     boundary
