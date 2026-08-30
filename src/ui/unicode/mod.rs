@@ -1,4 +1,3 @@
-use ropey::Rope;
 use unicode_normalization::{is_nfc, is_nfd};
 use unicode_segmentation::UnicodeSegmentation;
 use unicode_width::UnicodeWidthStr;
@@ -14,13 +13,23 @@ pub enum CanonicalType {
   None,
 }
 
+/// Gives Unicode support to Sycode.
 #[allow(dead_code)]
-pub struct Unicode;
+pub struct Unicode {
+  pub grapheme: Vec<Grapheme>,
+}
 
 #[allow(dead_code)]
-pub struct GraphemeLine {
-  pub range: std::ops::Range<usize>,
-  pub width: usize,
+#[derive(Default, Debug, Clone)]
+pub struct Grapheme {
+  /// Range of Unicode aware grapheme between two absolute indicies of the Displayed rope line.
+  pub rope_absolute_char_index_range: std::ops::Range<usize>,
+
+  /// Cell width of the Grapheme for cursor movement in column
+  pub term_cell_width: usize,
+
+  // Cumulative sum i.e sum of all the previous width all the way to current for the same line. Just for comparison about which grapheme width is most near to viewport width. 
+  pub cumulative_net_width: usize,
 }
 
 #[allow(dead_code)]
