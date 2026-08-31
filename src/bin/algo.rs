@@ -1,19 +1,44 @@
 use unicode_bidi::BidiInfo;
 
+/// Data regarding the bidirectional line for rendering
+pub struct BidiLine {
+  pub level_number: u8,
+  pub is_rtl: bool,
+  pub reordered_line: String,
+}
+
+/// Flips chars of `RTL` language (e.g `Arabic`, `Persian`, `Hebrew`) words into `RTL` logical sequence, if line contains any of them.
+pub fn into_bidirectional_line(line: &str) -> BidiLine {
+  let bidi_info = BidiInfo::new(line, None);
+
+  // The internal UBA algorith works on Paragraphs.
+  // Hence if your line does contains any Paragraph
+  // seperator then this would consider it as
+  // (net_paragraph_seperator_count + 1)
+  //
+  // List of Paragraoh Seperator:
+  // [LF, CR, CRLF, NEL, LS, PS]
+  let paragraphs = &bidi_info.paragraphs[0];
+
+  // Odd number means RTL word
+  // Even number means LTR word
+  let level_number = paragraphs.level.number();
+  let is_rtl = paragraphs.level.is_rtl();
+
+  // Tells which part belong to what paragraph.
+  let paragraph_range = paragraphs.range.clone();
+
+  let reordered_line = bidi_info
+    .reorder_line(paragraphs, paragraph_range)
+    .to_string();
+
+  BidiLine {
+    level_number,
+    is_rtl,
+    reordered_line,
+  }
+}
+
 fn main() {
-  // Stored in logical order: م ر ح ب ا (typed order)
-  let text = "Arabic مرحبا with english EMBEDDED then مزيد arabic";
-  println!("{text}");
-
-  // Resolve embedding levels. `None` = auto-detect paragraph direction.
-  let bidi_info = BidiInfo::new(text, None);
-
-  let para = &bidi_info.paragraphs[0];
-  println!("Paragraph level: {}", para.level.number()); // odd = RTL
-  println!("Is RTL: {}", para.level.is_rtl()); // true
-
-  // Get the *visually* reordered line for display
-  let line = para.range.clone();
-  let display = bidi_info.reorder_line(para, line);
-  println!("Visual order string: {}", display);
+  into_bidirectional_line("مزحبا");
 }
