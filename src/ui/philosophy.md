@@ -1,15 +1,28 @@
 # Softwrap
 
-> Break only at: ASCII spaces, commas, or after/before such special symbols where it feels right, so the user never sees corrupted soft-wrap.
+Break rope line string for the renderer at genuine point such as:
+
+1. Mostly at grapheme boundaries.
+2. In general common chars where it feels right to such as commas
+
+# Hardwrap 
+
+This is more about file based prebuilt hard wrapping display to map Rope's Line Break defaults.
+
+1. Unicodes that do linebreak (Listed below in Heading 3)
 
 # Cursor movement philosophy
 
-> There is no need for a GraphemeCursor or persistent word-boundary structure. Just parse the current line and directly jump to the word start/word end. Reparse the line whenever it changes.
+Cursor movement must be :
+
+1. Grapheme range and width aware.
+2. Must be word start/end aware.
 
 # Rope and Render 1:1 on line break.
 
 By default Ropey crate supports the following line break characters :
 
+```txt
 U + 000A -- LF (Line Feed) -- \n -- Move to next line.
 U + 000B -- VT (Vertical Tab) -- \v --Move vertically down.
 U + 000C -- Form Feed -- \f -- Advance to the next page/form
@@ -18,16 +31,11 @@ U + 0085 -- Next Line NEL -- Go to next line
 U + 2028 -- Line Seperator -- Explicit Unicode line seperator 
 U + 2029 -- Paragraph Seperator PS -- Explict Unicode Paragraoh Seperator.
 
-
-+
-
 CRLF -> Carriage return + Line Feed.
 VT is the counter part of HT(Horizontal Tabbing).
+
 Form Feed -- Switch to next page but since in text editor there is no page concept the way similar to typewriters hence ropey instead take it as a line break.
-
-NEL -> for terminal terminology
-
-LS & PS are modern concepts hence so worth taking seriously more than the LF.
+```
 
 > The viewport renderer must be 1:1 with rope recognized newline sequences.
 
