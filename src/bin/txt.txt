@@ -1,7 +1,2 @@
-apple  river
-  mountain
-  window
-  garden
-  computer
- language
- 
+Hello,
+World!
