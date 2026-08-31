@@ -1,39 +1,19 @@
-use unicode_normalization::{is_nfc, is_nfd};
-
-enum CanonicalType {
-  /// String contains `NFC` along `NFD`.
-  Mix,
-  /// String contains only `NFC`
-  Nfc,
-  /// String contains only `NFD`
-  Nfd,
-  /// String conatins neither of `NFC` or `NFD`
-  None,
-}
+use unicode_bidi::BidiInfo;
 
 fn main() {
-  // no nfd, no nfd (true, true) -- contains none
-  // is nfc, is nfd (false, false) -- contains both
-  // is nfc, no nfd (true, false) -- only nfc
-  // no nfc, is nfd (false, true) -- only nfd
-  let s1 = "café e\u{301}";
-  let s2 = "café";
-  let s3 = "cafe\u{301}";
-  let s4 = "Plain";
+  // Stored in logical order: م ر ح ب ا (typed order)
+  let text = "Arabic مرحبا with english EMBEDDED then مزيد arabic";
+  println!("{text}");
 
-  let s = s4;
+  // Resolve embedding levels. `None` = auto-detect paragraph direction.
+  let bidi_info = BidiInfo::new(text, None);
 
-  let a = match (is_nfc(s), is_nfd(s)) {
-    (true, true) => CanonicalType::None,
-    (true, false) => CanonicalType::Nfc,
-    (false, true) => CanonicalType::Nfd,
-    (false, false) => CanonicalType::Mix,
-  };
+  let para = &bidi_info.paragraphs[0];
+  println!("Paragraph level: {}", para.level.number()); // odd = RTL
+  println!("Is RTL: {}", para.level.is_rtl()); // true
 
-  match a {
-    CanonicalType::Mix => println!("MIX"),
-    CanonicalType::Nfc => println!("NFC"),
-    CanonicalType::Nfd => println!("NFD"),
-    CanonicalType::None => println!("NONE"),
-  }
+  // Get the *visually* reordered line for display
+  let line = para.range.clone();
+  let display = bidi_info.reorder_line(para, line);
+  println!("Visual order string: {}", display);
 }
