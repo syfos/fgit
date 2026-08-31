@@ -17,6 +17,11 @@ fn main() -> anyhow::Result<()> {
   let mut rope = Rope::from_reader(BufReader::new(fs::File::open(string_to_path(
     "~/impl/rust/fgit/src/bin/txt.txt",
   )?)?))?;
-  println!("{rope:?}");
+  println!("chars: {}", rope.len_chars());
+  println!("lines: {}", rope.len_lines());
+
+  for i in 0..rope.len_lines() {
+    println!("line {i}: {:?}", rope.line(i));
+  }
   Ok(())
 }
