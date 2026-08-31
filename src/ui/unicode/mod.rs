@@ -17,13 +17,15 @@ pub enum CanonicalType {
 /// Gives Unicode support to Sycode.
 #[allow(dead_code)]
 pub struct Unicode {
-  pub viewport_grapheme_lines: Vec<GraphemeLine>,
-  pub viewport_bidirectional_lines: Vec<BidiLine>,
+  /// Viewport lines into Grapheme aware lines 
+  pub viewport_grapheme_lines: Vec<GraphemeAwareLine>,
+  /// Viewport lines into Bidirection aware lines 
+  pub viewport_bidirectional_lines: Vec<BidiAwareLine>,
 }
 
 /// Data regarding the bidirectional line for rendering
 #[allow(dead_code)]
-pub struct BidiLine {
+pub struct BidiAwareLine {
   pub level_number: u8,
   pub is_rtl: bool,
   pub reordered_line: String,
@@ -31,7 +33,7 @@ pub struct BidiLine {
 
 #[allow(dead_code)]
 #[derive(Default, Debug, Clone)]
-pub struct GraphemeLine {
+pub struct GraphemeAwareLine {
   /// Range of Unicode aware grapheme between two absolute indicies of the Displayed rope line.
   pub rope_absolute_char_index_range: std::ops::Range<usize>,
 
@@ -50,7 +52,7 @@ impl Unicode {
   /// with char index of line.
   /// This give you flexibility to preform well
   /// cordinated unicode aware operations.
-  pub fn get_grapheme_ranges(line: &str, line_to_char: &usize) -> Vec<GraphemeLine> {
+  pub fn get_grapheme_ranges(line: &str, line_to_char: &usize) -> Vec<GraphemeAwareLine> {
     let mut boundary = Vec::new();
     let mut offset = 0usize;
     let mut cumulative_net_width = 0usize;
@@ -61,7 +63,7 @@ impl Unicode {
       let end = *line_to_char + offset;
       let term_cell_width = grapheme.width();
       cumulative_net_width += term_cell_width;
-      boundary.push(GraphemeLine {
+      boundary.push(GraphemeAwareLine {
         rope_absolute_char_index_range: start..end,
         term_cell_width,
         cumulative_net_width,
@@ -71,7 +73,7 @@ impl Unicode {
   }
 
   /// Flips chars of `RTL` language (e.g `Arabic`, `Persian`, `Hebrew`) words of given line into `RTL` logical sequence words keeping non RTL words intact.
-  pub fn into_bidirectional_line(line: &str) -> BidiLine {
+  pub fn into_bidirectional_line(line: &str) -> BidiAwareLine {
     let bidi_info = BidiInfo::new(line, None);
 
     // The internal UBA algorith works on Paragraphs.
@@ -95,7 +97,7 @@ impl Unicode {
       .reorder_line(paragraphs, paragraph_range)
       .to_string();
 
-    BidiLine {
+    BidiAwareLine {
       level_number,
       is_rtl,
       reordered_line,
