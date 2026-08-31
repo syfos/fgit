@@ -1,3 +1,4 @@
+use unicode_bidi::BidiInfo;
 use unicode_normalization::{is_nfc, is_nfd};
 use unicode_segmentation::UnicodeSegmentation;
 use unicode_width::UnicodeWidthStr;
@@ -16,19 +17,28 @@ pub enum CanonicalType {
 /// Gives Unicode support to Sycode.
 #[allow(dead_code)]
 pub struct Unicode {
-  pub grapheme: Vec<Grapheme>,
+  pub viewport_grapheme_lines: Vec<GraphemeLine>,
+  pub viewport_bidirectional_lines: Vec<BidiLine>,
+}
+
+/// Data regarding the bidirectional line for rendering
+#[allow(dead_code)]
+pub struct BidiLine {
+  pub level_number: u8,
+  pub is_rtl: bool,
+  pub reordered_line: String,
 }
 
 #[allow(dead_code)]
 #[derive(Default, Debug, Clone)]
-pub struct Grapheme {
+pub struct GraphemeLine {
   /// Range of Unicode aware grapheme between two absolute indicies of the Displayed rope line.
   pub rope_absolute_char_index_range: std::ops::Range<usize>,
 
   /// Cell width of the Grapheme for cursor movement in column
   pub term_cell_width: usize,
 
-  // Cumulative sum i.e sum of all the previous width all the way to current for the same line. Just for comparison about which grapheme width is most near to viewport width. 
+  // Cumulative sum i.e sum of all the previous width all the way to current for the same line. Just for comparison about which grapheme width is most near to viewport width.
   pub cumulative_net_width: usize,
 }
 
@@ -40,7 +50,7 @@ impl Unicode {
   /// with char index of line.
   /// This give you flexibility to preform well
   /// cordinated unicode aware operations.
-  pub fn get_grapheme_ranges(line: &str, line_to_char: &usize) -> Vec<Grapheme> {
+  pub fn get_grapheme_ranges(line: &str, line_to_char: &usize) -> Vec<GraphemeLine> {
     let mut boundary = Vec::new();
     let mut offset = 0usize;
     let mut cumulative_net_width = 0usize;
@@ -51,7 +61,7 @@ impl Unicode {
       let end = *line_to_char + offset;
       let term_cell_width = grapheme.width();
       cumulative_net_width += term_cell_width;
-      boundary.push(Grapheme {
+      boundary.push(GraphemeLine {
         rope_absolute_char_index_range: start..end,
         term_cell_width,
         cumulative_net_width,
@@ -59,6 +69,39 @@ impl Unicode {
     }
     boundary
   }
+
+  /// Flips chars of `RTL` language (e.g `Arabic`, `Persian`, `Hebrew`) words of given line into `RTL` logical sequence words keeping non RTL words intact.
+  pub fn into_bidirectional_line(line: &str) -> BidiLine {
+    let bidi_info = BidiInfo::new(line, None);
+
+    // The internal UBA algorith works on Paragraphs.
+    // Hence if your line does contains any Paragraph
+    // seperator then this would consider it as
+    // (net_paragraph_seperator_count + 1)
+    //
+    // List of Paragraoh Seperator:
+    // [LF, CR, CRLF, NEL, LS, PS]
+    let paragraphs = &bidi_info.paragraphs[0];
+
+    // Odd number means RTL word
+    // Even number means LTR word
+    let level_number = paragraphs.level.number();
+    let is_rtl = paragraphs.level.is_rtl();
+
+    // Tells which part belong to what paragraph.
+    let paragraph_range = paragraphs.range.clone();
+
+    let reordered_line = bidi_info
+      .reorder_line(paragraphs, paragraph_range)
+      .to_string();
+
+    BidiLine {
+      level_number,
+      is_rtl,
+      reordered_line,
+    }
+  }
+
   /// This function returns the `[CanonicalType]` of Normalization form of the given string.
   ///
   /// This function is purely for search/replace command.
