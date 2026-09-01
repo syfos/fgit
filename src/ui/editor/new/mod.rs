@@ -46,4 +46,22 @@ impl Editor {
 
     viewport_lines
   }
+
+  /// Matches the last most line break unicode character and returns one of variant of [`LineBreakChar`].
+  fn detect_trailing_linebreak_char(line: &str) -> LineBreakChar {
+    if line.ends_with("\r\n") {
+      return LineBreakChar::CRLF;
+    }
+
+    match line.chars().last() {
+      Some('\n') => LineBreakChar::LF,
+      Some('\r') => LineBreakChar::CR,
+      Some('\u{0B}') => LineBreakChar::VT,
+      Some('\u{0C}') => LineBreakChar::FF,
+      Some('\u{85}') => LineBreakChar::NEL,
+      Some('\u{2028}') => LineBreakChar::LS,
+      Some('\u{2029}') => LineBreakChar::PS,
+      _ => LineBreakChar::None,
+    }
+  }
 }
