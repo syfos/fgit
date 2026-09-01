@@ -10,15 +10,16 @@ pub struct ViewportLine {
 
 #[allow(dead_code)]
 #[allow(clippy::upper_case_acronyms)]
+#[allow(nonstandard_style)]
 pub enum LineBreakChar {
-  LF,
-  FF,
-  CR,
-  CRLF,
-  VT,
-  PS,
-  LS,
-  NEL,
+  LineFeed,
+  FromFeed,
+  CarriageReturn,
+  CarriageReturn_LineFeed,
+  VerticalTab,
+  ParagraphSeperator,
+  LineSeperator,
+  NextLine,
   None,
 }
 
@@ -52,17 +53,17 @@ impl Editor {
   /// Matches the last most line break unicode character and returns one of variant of [`LineBreakChar`].
   fn detect_trailing_linebreak_char(line: &str) -> LineBreakChar {
     if line.ends_with("\r\n") {
-      return LineBreakChar::CRLF;
+      return LineBreakChar::CarriageReturn_LineFeed;
     }
 
     match line.chars().last() {
-      Some('\n') => LineBreakChar::LF,
-      Some('\r') => LineBreakChar::CR,
-      Some('\u{0B}') => LineBreakChar::VT,
-      Some('\u{0C}') => LineBreakChar::FF,
-      Some('\u{85}') => LineBreakChar::NEL,
-      Some('\u{2028}') => LineBreakChar::LS,
-      Some('\u{2029}') => LineBreakChar::PS,
+      Some('\n') => LineBreakChar::LineFeed,
+      Some('\r') => LineBreakChar::CarriageReturn,
+      Some('\u{0B}') => LineBreakChar::VerticalTab,
+      Some('\u{0C}') => LineBreakChar::FromFeed,
+      Some('\u{85}') => LineBreakChar::NextLine,
+      Some('\u{2028}') => LineBreakChar::LineSeperator,
+      Some('\u{2029}') => LineBreakChar::ParagraphSeperator,
       _ => LineBreakChar::None,
     }
   }
