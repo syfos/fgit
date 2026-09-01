@@ -51,21 +51,7 @@ pub struct Graphemes {
 impl Unicode {
   /// Returns [`Vec<Graphemes>`] which contains all
   /// `Graphemes` of given string along its `cell width` and its `cumulative_term_cell_width`.
-  /// ```
-  ///pub struct Graphemes {
-  ///  /// The range of `Unicode` aware Grapheme between two absolute character indicies of a rope line.
-  ///  pub rope_absolute_char_index_range: std::ops::Range<usize>,
-  ///
-  ///  /// The width in `terminal cell` the Grapheme is occupying.
-  ///  /// Used for cursor movement in terminal column.
-  ///  pub term_cell_width: usize,
-  ///
-  ///  // The cumulative width i.e sum of width of terminal cells occupied by very first `Grapheme` all the way to current `Grapheme`.
-  ///  // The cumulative_term_cell_width of very first Grapheme is always equal to `term_cell_width` of the Grapheme.
-  ///  // Derived by `cumulative_term_cell_width += term_cell_width` for each grapheme.
-  ///  pub cumulative_term_cell_width: usize,
-  ///}
-  ///```
+  /// Each [`Vec<Graphemes>`] is a Line
   pub fn into_grapheme_line(line: &str, line_to_char: &usize) -> Vec<Graphemes> {
     let mut boundary = Vec::new();
     let mut offset = 0usize;
@@ -84,7 +70,6 @@ impl Unicode {
       });
     }
 
-    // Each Vec<Graphemes> is a Line
     boundary
   }
 
