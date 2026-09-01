@@ -34,24 +34,38 @@ pub struct BidiAwareLine {
 #[allow(dead_code)]
 #[derive(Default, Debug, Clone)]
 pub struct Graphemes {
-  /// Range of Unicode aware grapheme between two absolute indicies of the Displayed rope line.
+  /// The range of `Unicode` aware Grapheme between two absolute character indicies of a rope line.
   pub rope_absolute_char_index_range: std::ops::Range<usize>,
 
-  /// Cell width of the Grapheme for cursor movement in column
+  /// The width in `terminal cell` the Grapheme is occupying.
+  /// Used for cursor movement in terminal column.
   pub term_cell_width: usize,
 
-  // Cumulative sum i.e sum of all the previous width all the way to current for the same line. Just for comparison about which grapheme width is most near to viewport width.
-  pub cumulative_net_width: usize,
+  // The cumulative width i.e sum of width of terminal cells occupied by very first `Grapheme` all the way to current `Grapheme`.
+  // The cumulative_term_cell_width of very first Grapheme is always equal to `term_cell_width` of the Grapheme.
+  // Derived by `cumulative_term_cell_width += term_cell_width` for each grapheme.
+  pub cumulative_term_cell_width: usize,
 }
 
 #[allow(dead_code)]
 impl Unicode {
-  /// Returns unicode aware character
-  /// width of each grapheme.
-  /// The returned vector's indices map 1:1
-  /// with char index of line.
-  /// This give you flexibility to preform well
-  /// cordinated unicode aware operations.
+  /// Returns [`Vec<Graphemes>`] which contains all
+  /// `Graphemes` of given string along its `cell width` and its `cumulative_term_cell_width`.
+  /// ```
+  ///pub struct Graphemes {
+  ///  /// The range of `Unicode` aware Grapheme between two absolute character indicies of a rope line.
+  ///  pub rope_absolute_char_index_range: std::ops::Range<usize>,
+  ///
+  ///  /// The width in `terminal cell` the Grapheme is occupying.
+  ///  /// Used for cursor movement in terminal column.
+  ///  pub term_cell_width: usize,
+  ///
+  ///  // The cumulative width i.e sum of width of terminal cells occupied by very first `Grapheme` all the way to current `Grapheme`.
+  ///  // The cumulative_term_cell_width of very first Grapheme is always equal to `term_cell_width` of the Grapheme.
+  ///  // Derived by `cumulative_term_cell_width += term_cell_width` for each grapheme.
+  ///  pub cumulative_term_cell_width: usize,
+  ///}
+  ///```
   pub fn into_grapheme_line(line: &str, line_to_char: &usize) -> Vec<Graphemes> {
     let mut boundary = Vec::new();
     let mut offset = 0usize;
@@ -66,7 +80,7 @@ impl Unicode {
       boundary.push(Graphemes {
         rope_absolute_char_index_range: start..end,
         term_cell_width,
-        cumulative_net_width,
+        cumulative_term_cell_width: cumulative_net_width,
       });
     }
 
