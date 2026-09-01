@@ -1,5 +1,7 @@
 use crate::ui::editor::Editor;
 
+pub mod word_motion;
+
 #[allow(dead_code)]
 pub struct ViewportLine {
   pub string: String,
