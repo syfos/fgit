@@ -17,9 +17,9 @@ pub enum CanonicalType {
 /// Gives Unicode support to Sycode.
 #[allow(dead_code)]
 pub struct Unicode {
-  /// Viewport lines into Grapheme aware lines 
-  pub viewport_grapheme_lines: Vec<GraphemeAwareLine>,
-  /// Viewport lines into Bidirection aware lines 
+  /// Viewport lines into Grapheme aware lines
+  pub viewport_grapheme_lines: Vec<Vec<Graphemes>>,
+  /// Viewport lines into Bidirection aware lines
   pub viewport_bidirectional_lines: Vec<BidiAwareLine>,
 }
 
@@ -33,7 +33,7 @@ pub struct BidiAwareLine {
 
 #[allow(dead_code)]
 #[derive(Default, Debug, Clone)]
-pub struct GraphemeAwareLine {
+pub struct Graphemes {
   /// Range of Unicode aware grapheme between two absolute indicies of the Displayed rope line.
   pub rope_absolute_char_index_range: std::ops::Range<usize>,
 
@@ -52,7 +52,7 @@ impl Unicode {
   /// with char index of line.
   /// This give you flexibility to preform well
   /// cordinated unicode aware operations.
-  pub fn get_grapheme_ranges(line: &str, line_to_char: &usize) -> Vec<GraphemeAwareLine> {
+  pub fn get_grapheme_ranges(line: &str, line_to_char: &usize) -> Vec<Graphemes> {
     let mut boundary = Vec::new();
     let mut offset = 0usize;
     let mut cumulative_net_width = 0usize;
@@ -63,12 +63,14 @@ impl Unicode {
       let end = *line_to_char + offset;
       let term_cell_width = grapheme.width();
       cumulative_net_width += term_cell_width;
-      boundary.push(GraphemeAwareLine {
+      boundary.push(Graphemes {
         rope_absolute_char_index_range: start..end,
         term_cell_width,
         cumulative_net_width,
       });
     }
+
+    // Each Vec<Graphemes> is a Line
     boundary
   }
 
