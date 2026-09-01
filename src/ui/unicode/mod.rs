@@ -52,7 +52,7 @@ impl Unicode {
   /// with char index of line.
   /// This give you flexibility to preform well
   /// cordinated unicode aware operations.
-  pub fn get_grapheme_ranges(line: &str, line_to_char: &usize) -> Vec<Graphemes> {
+  pub fn into_grapheme_line(line: &str, line_to_char: &usize) -> Vec<Graphemes> {
     let mut boundary = Vec::new();
     let mut offset = 0usize;
     let mut cumulative_net_width = 0usize;
