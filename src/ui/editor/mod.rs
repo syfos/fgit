@@ -8,6 +8,7 @@ pub mod cursor;
 pub mod edit;
 pub mod helper;
 pub mod render;
+pub mod new;
 
 #[derive(Default)]
 pub struct Editor {
