@@ -51,7 +51,8 @@ pub struct Graphemes {
 impl Unicode {
   /// Returns [`Vec<Graphemes>`] which contains all
   /// `Graphemes` of given string along its `cell width` and its `cumulative_term_cell_width`.
-  /// Each [`Vec<Graphemes>`] is a Line
+  /// Each [`Vec<Graphemes>`] is a Line.
+  /// The `rope_absolute_char_index_range` per `Grapheme` is character index range.
   pub fn into_grapheme_line(line: &str, line_to_char: &usize) -> Vec<Graphemes> {
     let mut boundary = Vec::new();
     let mut offset = 0usize;
