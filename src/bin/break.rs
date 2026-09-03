@@ -22,6 +22,42 @@ fn get_breakpoint_slices(rope_line: &str, breakpoints: &[usize]) -> Vec<String> 
     .collect()
 }
 
+/// Returns the slices of a line for softwrap.
+/// Note: Only the last value will contain a linebreak char/unicode.
+#[allow(dead_code)]
+fn wrap(rope_line: &str, breakpoints: &[usize], viewport_width: &usize) -> Vec<String> {
+  let mut wrap = Vec::new();
+  let breakpoint_slices = get_breakpoint_slices(rope_line, breakpoints);
+
+  let mut current_line = String::new();
+  let mut current_width = 0usize;
+
+  for str in breakpoint_slices.iter() {
+    let slice_width = str.width_cjk();
+
+    if slice_width > *viewport_width {
+      if !current_line.is_empty() {
+        wrap.push(std::mem::take(&mut current_line));
+        current_width = 0;
+      }
+      wrap.extend(break_at_grapheme(str, viewport_width));
+    } else if current_width + slice_width > *viewport_width {
+      wrap.push(std::mem::take(&mut current_line));
+      current_line.push_str(str);
+      current_width = slice_width;
+    } else {
+      current_line.push_str(str);
+      current_width += slice_width;
+    }
+  }
+
+  if !current_line.is_empty() {
+    wrap.push(current_line);
+  }
+
+  wrap
+}
+
 fn break_at_grapheme(slice: &str, viewport_width: &usize) -> Vec<String> {
   //
   let grapheme_aware_break = most_equal(&get_cumulative_widths_of_graphemes(slice), viewport_width);
