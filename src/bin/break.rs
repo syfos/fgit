@@ -3,19 +3,22 @@ use unicode_segmentation::UnicodeSegmentation;
 use unicode_width::UnicodeWidthStr;
 
 fn main() {
-  let segmenter = LineSegmenter::new_auto(LineBreakOptions::default());
+  let rope_line = "Hello, World! I am a good Guy. I a a very Good Person. Lsps.\n";
 
-  let text = "Hello, World! I am a good Guy. I a a very Good Person. Lsps.";
-
-  // Breakpoint are grapheme aware, word aware and sepcially scripto continua aware.
-  let breakpoints: Vec<usize> = segmenter.segment_str(text).collect();
-
-  println!("{:?}", breakpoints);
+  get_breakpoints(rope_line);
 
   println!("Wrap lines: ");
-  for i in wrap(text, &breakpoints, &40usize) {
-    println!("{i}");
+  for i in wrap(rope_line, &40usize) {
+    println!("{i:?}");
   }
+}
+
+/// Returns the vector containing breakpoints of given string.
+/// Note: the breakpoints are `unicode-aware`, `grapheme-aware` and more specifically `scripto continua-aware`
+fn get_breakpoints(rope_line: &str) -> Vec<usize> {
+  LineSegmenter::new_auto(LineBreakOptions::default())
+    .segment_str(rope_line)
+    .collect()
 }
 
 // Get the slices at valid break points of strings.
@@ -30,7 +33,8 @@ fn get_breakpoint_slices(rope_line: &str, breakpoints: &[usize]) -> Vec<String> 
 /// Returns the slices of a line for softwrap.
 /// Note: Only the last value will contain a linebreak char/unicode.
 #[allow(dead_code)]
-fn wrap(rope_line: &str, breakpoints: &[usize], viewport_width: &usize) -> Vec<String> {
+fn wrap(rope_line: &str, viewport_width: &usize) -> Vec<String> {
+  let breakpoints = &get_breakpoints(rope_line);
   let mut wrap = Vec::new();
   let breakpoint_slices = get_breakpoint_slices(rope_line, breakpoints);
 
