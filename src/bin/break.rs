@@ -11,6 +11,11 @@ fn main() {
   let breakpoints: Vec<usize> = segmenter.segment_str(text).collect();
 
   println!("{:?}", breakpoints);
+
+  println!("Wrap lines: ");
+  for i in wrap(text, &breakpoints, &0usize) {
+    println!("{i}");
+  }
 }
 
 // Get the slices at valid break points of strings.
