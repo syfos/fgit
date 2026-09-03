@@ -11,7 +11,27 @@ fn main() {
   for i in wrap(rope_line, &40usize) {
     println!("{i:?}");
   }
+
+  get_row_ranges();
+
+  let row_taken = wrap(rope_line, &40usize).len();
+  println!("{row_taken}");
 }
+
+/// Returns ranges of wrapped lines, telling exactly how many rows of viewport have been occupied by a particular line. 
+/// Note: each element of `wrapped_lines` and the returned vector is equal to a rope line.
+  fn get_row_ranges() -> Vec<std::ops::RangeInclusive<usize>> {
+    let wrapped_lines_len: Vec<usize> = vec![3, 5 ,2];
+    let mut start = 1usize;
+    let mut row_ranges = Vec::new();
+    for wrapped_line in wrapped_lines {
+      let end = start + wrapped_line.saturating_sub(1);
+      row_ranges.push(start..=end);
+      start = end + 1;
+    }
+    println!("{row_ranges:?}");
+    row_ranges
+  }
 
 /// Returns the vector containing breakpoints of given string.
 /// Note: the breakpoints are `unicode-aware`, `grapheme-aware` and more specifically `scripto continua-aware`
