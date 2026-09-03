@@ -21,7 +21,7 @@ fn get_breakpoints(rope_line: &str) -> Vec<usize> {
     .collect()
 }
 
-// Get the slices at valid break points of strings.
+/// Get the slices at valid break points of strings.
 #[allow(dead_code)]
 fn get_breakpoint_slices(rope_line: &str, breakpoints: &[usize]) -> Vec<String> {
   breakpoints
@@ -90,15 +90,24 @@ fn break_at_grapheme(slice: &str, viewport_width: &usize) -> Vec<String> {
   wrap
 }
 
-// handles cases
-fn get_cumulative_widths_of_graphemes(slice: &str) -> Vec<(usize, usize)> {
+/// Holds `cumulative`width of a grapheme of a slice string
+/// along the byte index the grapheme belongs to.
+pub struct SliceData {
+  pub byte_idx: usize,
+  pub grapheme_cumulative_width: usize,
+}
+
+fn get_cumulative_widths_of_graphemes(slice: &str) -> Vec<SliceData> {
   let mut cumulative_width_counter_per_grapheme = 0usize;
   let mut byte_idx = 0usize;
   let mut cumulative_widths_of_graphemes = Vec::new();
   for grpaheme in slice.graphemes(true) {
     byte_idx += grpaheme.len();
     cumulative_width_counter_per_grapheme += grpaheme.width_cjk();
-    cumulative_widths_of_graphemes.push((byte_idx, cumulative_width_counter_per_grapheme));
+    cumulative_widths_of_graphemes.push(SliceData {
+      byte_idx,
+      grapheme_cumulative_width: cumulative_width_counter_per_grapheme,
+    });
   }
   cumulative_widths_of_graphemes
 }
@@ -109,13 +118,13 @@ fn get_cumulative_widths_of_graphemes(slice: &str) -> Vec<(usize, usize)> {
 /// viewport width.
 ///
 /// Note: `cumulative_width_of_grapheme` is always in sorted form hence, no inaccuracies can be there.
-fn most_equal(cumulative_widths_of_grapheme: &[(usize, usize)], viewport_width: &usize) -> usize {
+fn most_equal(cumulative_widths_of_grapheme: &[SliceData], viewport_width: &usize) -> usize {
   // The element index already has byte idx and the second value.
   let matched_element_idx = cumulative_widths_of_grapheme
-    .partition_point(|grapheme| grapheme.1 <= *viewport_width)
+    .partition_point(|grapheme| grapheme.grapheme_cumulative_width <= *viewport_width)
     .saturating_sub(1);
   cumulative_widths_of_grapheme
     .get(matched_element_idx)
     .unwrap()
-    .0
+    .byte_idx
 }
