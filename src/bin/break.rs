@@ -37,3 +37,19 @@ fn get_cumulative_widths_of_graphemes(slice: &str) -> Vec<(usize, usize)> {
   cumulative_widths_of_graphemes
 }
 
+/// Returns the element index of the given vector
+/// whose value matches the viewport_width such that
+/// viewport width is always less than or equal to
+/// viewport width.
+///
+/// Note: `cumulative_width_of_grapheme` is always in sorted form hence, no inaccuracies can be there.
+fn most_equal(cumulative_widths_of_grapheme: &[(usize, usize)], viewport_width: &usize) -> usize {
+  // The element index already has byte idx and the second value.
+  let matched_element_idx = cumulative_widths_of_grapheme
+    .partition_point(|grapheme| grapheme.1 <= *viewport_width)
+    .saturating_sub(1);
+  cumulative_widths_of_grapheme
+    .get(matched_element_idx)
+    .unwrap()
+    .0
+}
