@@ -13,3 +13,14 @@ fn main() {
   println!("{:?}", breakpoints);
 }
 
+// Get the slices at valid break points of strings.
+#[allow(dead_code)]
+fn get_breakpoint_slices(rope_line: &str, breakpoints: &[usize]) -> Vec<String> {
+  breakpoints
+    .windows(2)
+    .map(|w| rope_line[w[0]..w[1]].to_string())
+    .collect()
+}
+
+}
+
