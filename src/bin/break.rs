@@ -97,6 +97,8 @@ pub struct SliceData {
   pub grapheme_cumulative_width: usize,
 }
 
+/// Returns `cumulative width` data along `byte index` for each
+/// `grapheme` of the given rope string slice.
 fn get_cumulative_widths_of_graphemes(slice: &str) -> Vec<SliceData> {
   let mut cumulative_width_counter_per_grapheme = 0usize;
   let mut byte_idx = 0usize;
@@ -112,12 +114,19 @@ fn get_cumulative_widths_of_graphemes(slice: &str) -> Vec<SliceData> {
   cumulative_widths_of_graphemes
 }
 
-/// Returns the element index of the given vector
-/// whose value matches the viewport_width such that
-/// viewport width is always less than or equal to
-/// viewport width.
+/// Returns the `byte_idx` of the given slice whose `cumulative width` is less than or equal to `viewport`'s width and the most closest to the viewport width.
 ///
-/// Note: `cumulative_width_of_grapheme` is always in sorted form hence, no inaccuracies can be there.
+/// E.g:
+/// ```
+/// // Imagine a vector of struct SliceData
+/// let cumulative_widths = [0, 15, 30, 45, 60, 75, 90];
+/// let byte_indicies = [a, b, c, d, e, f, g];
+/// let viewport_width = 55;
+/// 
+/// most_equal(&slice_data_vector, viewport_width) 
+/// // answer -->
+/// // byte_idx: d (45 is nearmost less than/equal side that is near to 55)
+/// ```
 fn most_equal(cumulative_widths_of_grapheme: &[SliceData], viewport_width: &usize) -> usize {
   // The element index already has byte idx and the second value.
   let matched_element_idx = cumulative_widths_of_grapheme
