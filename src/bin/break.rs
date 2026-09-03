@@ -13,7 +13,7 @@ fn main() {
   println!("{:?}", breakpoints);
 
   println!("Wrap lines: ");
-  for i in wrap(text, &breakpoints, &0usize) {
+  for i in wrap(text, &breakpoints, &40usize) {
     println!("{i}");
   }
 }
