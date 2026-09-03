@@ -22,6 +22,27 @@ fn get_breakpoint_slices(rope_line: &str, breakpoints: &[usize]) -> Vec<String> 
     .collect()
 }
 
+fn break_at_grapheme(slice: &str, viewport_width: &usize) -> Vec<String> {
+  //
+  let grapheme_aware_break = most_equal(&get_cumulative_widths_of_graphemes(slice), viewport_width);
+
+  let mut wrap = Vec::new();
+  wrap.push(slice[..grapheme_aware_break].to_string());
+
+  let remainder = &slice[grapheme_aware_break..];
+  // loops for all the cases where the remainer
+  // would be wider than viewport_width
+  // Note: The last value will be always dropped
+  if remainder.width_cjk() > *viewport_width {
+    wrap.extend(break_at_grapheme(remainder, viewport_width));
+  }
+  // This will catch such remainder whose terminal
+  // width is lesser than viewport width
+  else {
+    wrap.push(remainder.to_string());
+  }
+
+  wrap
 }
 
 // handles cases
