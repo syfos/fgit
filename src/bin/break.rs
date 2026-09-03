@@ -24,3 +24,16 @@ fn get_breakpoint_slices(rope_line: &str, breakpoints: &[usize]) -> Vec<String> 
 
 }
 
+// handles cases
+fn get_cumulative_widths_of_graphemes(slice: &str) -> Vec<(usize, usize)> {
+  let mut cumulative_width_counter_per_grapheme = 0usize;
+  let mut byte_idx = 0usize;
+  let mut cumulative_widths_of_graphemes = Vec::new();
+  for grpaheme in slice.graphemes(true) {
+    byte_idx += grpaheme.len();
+    cumulative_width_counter_per_grapheme += grpaheme.width_cjk();
+    cumulative_widths_of_graphemes.push((byte_idx, cumulative_width_counter_per_grapheme));
+  }
+  cumulative_widths_of_graphemes
+}
+
