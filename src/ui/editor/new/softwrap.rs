@@ -12,6 +12,20 @@ pub struct SliceData {
 }
 
 impl SoftWrap {
+  /// Returns ranges of wrapped lines, telling exactly how many rows of viewport have been occupied by a particular line.
+  /// Note: each element of `wrapped_lines` and the returned vector is equal to a rope line.
+  ///
+  /// Note: if say a range is `0..4` then it means that the line is a scrolloffset line and has 4 
+  fn get_row_ranges(wrapped_lines: &[&[String]]) -> Vec<std::ops::RangeInclusive<usize>> {
+    let mut start = 1usize;
+    let mut row_ranges = Vec::new();
+    for wrapped_line in wrapped_lines {
+      let end = start + wrapped_line.len().saturating_sub(1);
+      row_ranges.push(start..=end);
+      start = end + 1;
+    }
+    row_ranges
+  }
   /// Returns the vector containing breakpoints of given string.
   /// Note: the breakpoints are `unicode-aware`, `grapheme-aware` and more specifically `scripto continua-aware`
   fn get_breakpoints(rope_line: &str) -> Vec<usize> {
