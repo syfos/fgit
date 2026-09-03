@@ -24,7 +24,7 @@ fn main() {
     let wrapped_lines_len: Vec<usize> = vec![3, 5 ,2];
     let mut start = 1usize;
     let mut row_ranges = Vec::new();
-    for wrapped_line in wrapped_lines {
+    for wrapped_line in wrapped_lines_len {
       let end = start + wrapped_line.saturating_sub(1);
       row_ranges.push(start..=end);
       start = end + 1;
