@@ -11,6 +11,7 @@ pub struct SliceData {
   pub grapheme_cumulative_width: usize,
 }
 
+#[allow(dead_code)]
 impl SoftWrap {
   /// Returns ranges of wrapped lines, telling exactly how many rows of viewport have been occupied by a particular line.
   /// Note: each element of `wrapped_lines` and the returned vector is equal to a rope line.
