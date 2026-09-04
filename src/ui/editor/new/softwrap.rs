@@ -27,6 +27,19 @@ pub struct Viewport {
 
 #[allow(dead_code)]
 impl SoftWrap {
+  
+  /// Wraps the viewport lines.
+  /// Note: It returns [`VecDeque`,] which allows pop and push on both ends.
+  fn wrap_viewport_lines(viewport: Viewport, rope: &Rope) {
+    let range = viewport.range;
+    let mut wrapped_lines = VecDeque::new();
+    for line_idx in range {
+      let rope_string = rope.line(line_idx).to_string();
+      let wrapped_line = Self::wrap(&rope_string, &viewport.width);
+      wrapped_lines.push_back(wrapped_line);
+    }
+  }
+
   /// Returns ranges of wrapped lines, telling exactly how many rows of viewport have been occupied by a particular line.
   /// Note: each element of `wrapped_lines` and the returned vector is equal to a rope line.
   ///
