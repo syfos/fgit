@@ -1,4 +1,7 @@
+use std::collections::VecDeque;
+
 use icu_segmenter::{LineSegmenter, options::LineBreakOptions};
+use ropey::Rope;
 use unicode_segmentation::UnicodeSegmentation;
 use unicode_width::UnicodeWidthStr;
 
@@ -9,6 +12,17 @@ pub struct SoftWrap;
 pub struct SliceData {
   pub byte_idx: usize,
   pub grapheme_cumulative_width: usize,
+}
+
+/// Stores data about rope lines that are to be displayed on the screen.
+#[allow(dead_code)]
+pub struct Viewport {
+  /// Inclusive range of rope line indices from 
+  /// `scrolloffset` all the way to `botline`.
+  /// Note: This field is only for information about `net lines` and helps know the `line_idx` of `scrolloffset` and `botline.`  
+  pub range: std::ops::RangeInclusive<usize>,
+  pub height: usize,
+  pub width: usize,
 }
 
 #[allow(dead_code)]
