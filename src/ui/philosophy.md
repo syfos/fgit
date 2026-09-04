@@ -86,3 +86,64 @@ fn main() -> anyhow::Result<()> {
 > You will clearly see that each line break unicode is take seriously.
 
 Hence, iterate for each of theme and create the next line for each of their occurences.
+
+# Philosophy of Scroll
+
+## Why use VecDeque
+
+Scoll is just continous pop of line towards the opposite direction along continious push of lines in the moving direction.
+
+E.g,
+
+Imagine a buffer which contains only unwrapped lines such that each row is a line.
+
+1. There are 10 unwrapped lines on 10 rows(max) of viewport, 
+2. Move the cusror down once (j × 1)
+3. Pop the very first line 
+4. Push the 11th lith 
+
+Here `VecDeque` allows me to efficiently:
+1. Pop the front and back side.
+2. Push to the front and back side.
+
+## How we scroll fast with `<C-f>` or `<C-b>`
+
+Same as pervious case but just at scale for e.g:
+
+Imagine your scroll down/up is set to 5 lines.
+
+Now say on scroll Down :
+
+1. Pop 5 Lines from front.
+2. Push 5 Lines from back.
+
+## How command line based teleporation will work?
+
+Well doing this is simple because you just have to draw the cursor at cursor col 0 of that line.
+
+But the real challange arrives when you have to draw the whole viewport around it as this thing needs smart logic.
+
+## Scrolloff=8 (configurable)
+
+The scrolloff is a limit band that neovim uses when the buffer is bigger than the viewport.
+
+Scrolloff tells the program that keep the set limit (default is 8) say scrolloff=8 sets the limit that there must be at minimun of --> 8 rows between the scrolloffset(first row) and the `cursor line`.
+
+While the implementation of scrolloff is only limited to the condition where :
+
+1. Viewport is smaller than the length of whole buffer
+
+**So I have to implement a row margine on both ends of viewport**
+
+The extended viewport will look like this:
+
+```txt
+[Extended_Front] [Viewport Main] [Extended_Back]
+    [10 rows]       [10 rows]       [10 row]
+```
+
+Where both the `Extended_Front` and `Extended_Back` must be and `Viewport` are equal to each other in terms of `net row`.
+
+Now using some logic I can regulate when shall be the scrolloff must be respected and when shall not.
+
+
