@@ -1,7 +1,13 @@
-use crate::ui::editor::Editor;
+use std::collections::VecDeque;
 
-pub mod word_motion;
+use crate::ui::editor::{
+  Editor,
+  new::{softwrap::SoftWrap, viewport::Viewport},
+};
+
+pub mod motions;
 pub mod softwrap;
+pub mod viewport;
 
 #[allow(dead_code)]
 pub struct ViewportLine {
