@@ -88,7 +88,6 @@ impl SoftWrap {
 }
 
 pub struct SliceRange {
-  pub start_row_counter: usize,
   pub row_range: ops::RangeInclusive<usize>,
 }
 
@@ -98,17 +97,19 @@ impl SoftWrap {
   /// Note: each element of `wrapped_lines` and the returned vector is equal to a rope line.
   ///
   /// Note: if say a range is `0..4` then it means that the line is a scrolloffset line and has 4
-  pub fn get_row_range(
-    wrapped_slice: &VecDeque<String>,
-    start_row: usize,
-  ) -> SliceRange {
-    let end_counter = start_row + wrapped_slice.len().saturating_sub(1);
-    let row_range = start_row..=end_counter;
-    SliceRange {
-      start_row_counter: end_counter + 1,
-      row_range,
-    }
+  pub fn get_row_range(wrapped_slice: &VecDeque<String>, start_row: &mut usize) -> SliceRange {
+    // assign end row counter
+    let end_counter = *start_row + wrapped_slice.len().saturating_sub(1);
+
+    // Cache the row range
+    let row_range = *start_row..=end_counter;
+
+    // Mutate the start row counter
+    *start_row += wrapped_slice.len();
+
+    SliceRange { row_range }
   }
+
   /// Returns the vector containing breakpoints of given string.
   /// Note: the breakpoints are `unicode-aware`, `grapheme-aware` and more specifically `scripto continua-aware`
   fn get_breakpoints(rope_line: &str) -> Vec<usize> {
