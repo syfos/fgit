@@ -21,6 +21,8 @@ pub struct WrappedRope {
   pub line_break_char: LineBreakChar,
 }
 
+/// Contains list of all recognized line break charachters that [`Ropey`] uses to mark a string as a [`RopeSlice`.]
+/// Note: This is just to map the rendered viewport line to let the caller easiky know what is the only line break character of this line.
 #[allow(dead_code)]
 #[allow(clippy::upper_case_acronyms)]
 #[allow(nonstandard_style)]
