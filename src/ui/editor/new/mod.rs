@@ -10,8 +10,14 @@ pub mod softwrap;
 pub mod viewport;
 
 #[allow(dead_code)]
-pub struct ViewportLine {
+pub struct WrappedRope {
+  // The wrapped string.
   pub string: String,
+  /// The rope line idx.
+  pub line_idx: usize,
+  /// Row range occupied by wrapped line
+  pub rows_occupied: std::ops::RangeInclusive<usize>,
+  /// The type of line break char at end of string.
   pub line_break_char: LineBreakChar,
 }
 
